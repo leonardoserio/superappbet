@@ -4,6 +4,15 @@ const { v4: uuidv4 } = require('uuid');
 const { moduleStore } = require('../store/moduleStore');
 const { broadcastUpdate } = require('../websocket/socketHandler');
 
+// Import the server to get access to io
+let io = null;
+function setSocketIO(socketIO) {
+  io = socketIO;
+}
+
+// Export the setter function
+module.exports.setSocketIO = setSocketIO;
+
 // Get all available modules
 router.get('/', (req, res) => {
   try {
@@ -66,13 +75,15 @@ router.post('/enable/:moduleId', (req, res) => {
     });
     
     // Broadcast module enabled event
-    broadcastUpdate('module_enabled', {
-      moduleId,
-      userId,
-      segment,
-      region,
-      config: result
-    });
+    if (io) {
+      io.emit('module_enabled', {
+        moduleId,
+        userId,
+        segment,
+        region,
+        config: result
+      });
+    }
     
     res.json({
       success: true,
@@ -103,13 +114,15 @@ router.post('/disable/:moduleId', (req, res) => {
     });
     
     // Broadcast module disabled event
-    broadcastUpdate('module_disabled', {
-      moduleId,
-      userId,
-      segment,
-      region,
-      reason
-    });
+    if (io) {
+      io.emit('module_disabled', {
+        moduleId,
+        userId,
+        segment,
+        region,
+        reason
+      });
+    }
     
     res.json({
       success: true,
@@ -324,5 +337,8 @@ router.post('/:moduleId/feature-flag', (req, res) => {
     });
   }
 });
+
+// Set the setter function before exporting
+router.setSocketIO = setSocketIO;
 
 module.exports = router;

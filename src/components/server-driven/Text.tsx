@@ -4,11 +4,12 @@ import { useTheme } from '@/design-system';
 import { ServerDrivenComponentProps } from './types';
 
 interface TextProps extends ServerDrivenComponentProps {
-  variant?: 'heading' | 'subheading' | 'body' | 'caption' | 'label';
+  variant?: 'heading' | 'subheading' | 'body' | 'caption' | 'label' | 'title' | 'subtitle';
   color?: 'primary' | 'secondary' | 'tertiary' | 'accent' | 'inverse';
   weight?: 'normal' | 'medium' | 'semibold' | 'bold';
   size?: keyof typeof import('@/design-system').typography.fontSizes;
   children?: string;
+  text?: string;
 }
 
 export const Text: React.FC<TextProps> = ({
@@ -18,6 +19,7 @@ export const Text: React.FC<TextProps> = ({
   weight = 'normal',
   size,
   children,
+  text,
 }) => {
   const { theme } = useTheme();
   
@@ -29,10 +31,22 @@ export const Text: React.FC<TextProps> = ({
           lineHeight: 32,
           fontWeight: '700',
         };
+      case 'title':
+        return {
+          fontSize: 20,
+          lineHeight: 28,
+          fontWeight: '700',
+        };
       case 'subheading':
         return {
           fontSize: 20,
           lineHeight: 28,
+          fontWeight: '600',
+        };
+      case 'subtitle':
+        return {
+          fontSize: 16,
+          lineHeight: 24,
           fontWeight: '600',
         };
       case 'body':
@@ -66,7 +80,7 @@ export const Text: React.FC<TextProps> = ({
     ...schema?.props?.style,
   };
 
-  const textContent = children || schema?.props?.children?.[0] || '';
+  const textContent = text || children || schema?.props?.text || schema?.props?.children?.[0] || '';
 
   return (
     <RNText style={textStyle}>

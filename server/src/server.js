@@ -42,15 +42,18 @@ app.get('/health', (req, res) => {
   });
 });
 
+// Setup WebSocket for real-time updates
+setupWebSocket(io);
+
+// Pass io to routes that need WebSocket functionality
+modulesRoutes.setSocketIO(io);
+
 // API Routes
 app.use('/api/sdui', sduiRoutes);
 app.use('/api/modules', modulesRoutes);
 app.use('/api/screens', screensRoutes);
 app.use('/api/components', componentsRoutes);
 app.use('/api/analytics', analyticsRoutes);
-
-// Setup WebSocket for real-time updates
-setupWebSocket(io);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

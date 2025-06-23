@@ -45,7 +45,7 @@ export const LotteryScreen: React.FC = () => {
       screenName="lottery"
       fallbackComponent={FallbackComponent}
       onScreenLoad={(config) => {
-        console.log('🎟️ Lottery screen loaded:', config.layout.type);
+        console.log('🎟️ Lottery screen loaded:', config.layout?.type || 'unknown');
       }}
       onError={(error) => {
         console.error('🎟️ Lottery screen error:', error);

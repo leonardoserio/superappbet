@@ -22,7 +22,7 @@ interface GameCardProps extends ServerDrivenComponentProps {
 }
 
 export const GameCard: React.FC<GameCardProps> = ({
-  schema,
+  schema: _schema,
   gameId,
   title,
   category,

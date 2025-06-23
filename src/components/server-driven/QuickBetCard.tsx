@@ -27,8 +27,8 @@ interface QuickBetCardProps extends ServerDrivenComponentProps {
 }
 
 export const QuickBetCard: React.FC<QuickBetCardProps> = ({
-  schema,
-  eventId,
+  schema: _schema,
+  eventId: _eventId,
   homeTeam,
   awayTeam,
   league,

@@ -22,20 +22,37 @@ const AppContent: React.FC = () => {
         console.log('🚀 Initializing SDUI services...');
         
         // Initialize WebSocket connection
-        WebSocketService.connect();
+        await WebSocketService.connect();
         
         // Setup WebSocket event handlers
         WebSocketService.setEventHandlers({
-          onModuleUpdated: (data) => {
-            console.log('📦 Module updated via WebSocket:', data);
-            // Reinitialize modules when backend updates them
-            ModuleService.getInstance().initializeModules();
+          onModuleEnabled: async (data) => {
+            console.log('📦 Module enabled via WebSocket:', data);
+            const moduleService = ModuleService.getInstance();
+            if (!moduleService.isModuleEnabled(data.moduleId)) {
+              await moduleService.enableModule(data.moduleId, data.config);
+            }
+          },
+          onModuleDisabled: async (data) => {
+            console.log('📦 Module disabled via WebSocket:', data);
+            const moduleService = ModuleService.getInstance();
+            if (moduleService.isModuleEnabled(data.moduleId)) {
+              await moduleService.disableModule(data.moduleId, data.reason);
+            }
+          },
+          onModuleConfigUpdated: (data) => {
+            console.log('⚙️ Module config updated via WebSocket:', data);
+            // Handle module config updates if needed
           },
           onScreenUpdated: (data) => {
             console.log('🖥️ Screen updated via WebSocket:', data);
           },
           onThemeUpdated: (data) => {
             console.log('🎨 Theme updated via WebSocket:', data);
+          },
+          onForceRefresh: (data) => {
+            console.log('🔄 Force refresh requested via WebSocket:', data.reason);
+            // Could trigger a complete app refresh here
           },
         });
         

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, ScrollView, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { useTheme } from '@/design-system';
 import { SDUIService, ScreenConfiguration } from '@/services/sdui/SDUIService';
@@ -59,24 +59,30 @@ export const SDUIRenderer: React.FC<SDUIRendererProps> = ({
     loadScreenConfiguration();
     
     // Setup WebSocket handler for real-time screen updates
-    const originalHandler = WebSocketService['handlers']?.onScreenUpdated;
-    WebSocketService.setEventHandlers({
-      onScreenUpdated: (data) => {
-        if (data.screenName === screenName && data.variant === variant) {
-          console.log(`🖥️ Screen ${screenName} updated via WebSocket`);
+    const handleScreenUpdate = (data: any) => {
+      if (data?.screenName === screenName && data?.variant === variant) {
+        console.log(`🖥️ Screen ${screenName} updated via WebSocket`);
+        if (data.config) {
           setConfig(data.config);
           onScreenLoad?.(data.config);
         }
-        originalHandler?.(data);
-      },
-    });
+      }
+    };
+    
+    try {
+      WebSocketService.setEventHandlers({
+        onScreenUpdated: handleScreenUpdate,
+      });
+    } catch (wsError) {
+      console.warn('Failed to setup WebSocket handlers:', wsError);
+    }
 
     return () => {
       // Cleanup if needed
     };
-  }, [screenName, variant, userId]);
+  }, [screenName, variant, userId, loadScreenConfiguration, onScreenLoad]);
 
-  const loadScreenConfiguration = async () => {
+  const loadScreenConfiguration = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -126,10 +132,17 @@ export const SDUIRenderer: React.FC<SDUIRendererProps> = ({
     } finally {
       setLoading(false);
     }
-  };
+  }, [screenName, variant, userId, onScreenLoad, onError]);
 
   const renderComponent = (componentConfig: any, index: number): React.ReactNode => {
-    const { id, type, props = {}, children = [], conditions } = componentConfig;
+    if (!componentConfig) return null;
+    
+    const { id, type, props = {}, children = [], conditions } = componentConfig || {};
+    
+    if (!type) {
+      console.warn(`Component missing type at index ${index}`);
+      return null;
+    }
     
     // Check component conditions (platform, user segment, etc.)
     if (conditions && !evaluateConditions(conditions)) {
@@ -149,19 +162,23 @@ export const SDUIRenderer: React.FC<SDUIRendererProps> = ({
       );
     }
 
-    // Handle component actions
+    // Handle component actions - ensure props is always an object
+    const safeProps = props || {};
     const enhancedProps = {
-      ...props,
+      ...safeProps,
       key: id || index,
-      onPress: props.onPress || (() => handleComponentAction(componentConfig)),
-      children: children.length > 0 ? children.map(renderComponent) : props.children,
+      schema: componentConfig, // Pass the full component config as schema
+      onPress: safeProps.onPress || (() => handleComponentAction(componentConfig)),
+      children: children?.length > 0 ? children.map(renderComponent) : safeProps.children,
     };
 
     return React.createElement(ComponentClass, enhancedProps);
   };
 
   const renderSection = (section: any, index: number): React.ReactNode => {
-    const { id, type, title, components = [], style = {} } = section;
+    if (!section) return null;
+    
+    const { id, type, title, components = [], style = {} } = section || {};
 
     switch (type) {
       case 'hero':
@@ -238,11 +255,11 @@ export const SDUIRenderer: React.FC<SDUIRendererProps> = ({
   };
 
   const renderLayout = (): React.ReactNode => {
-    if (!config) return null;
+    if (!config || !config.layout) return null;
 
     const { layout } = config;
     const containerStyle = {
-      backgroundColor: layout.backgroundColor || theme.colors.background.primary,
+      backgroundColor: layout?.backgroundColor || theme.colors.background.primary,
     };
 
     switch (layout.type) {

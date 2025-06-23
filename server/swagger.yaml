@@ -1,0 +1,2302 @@
+openapi: 3.0.3
+info:
+  title: SuperAppBet SDUI API
+  version: 1.0.0
+  description: |
+    API para o sistema Server-Driven UI do SuperAppBet - uma aplicação de apostas com arquitetura de micro frontends.
+    
+    Esta API oferece:
+    - 🎮 **Gerenciamento de Módulos**: Ativar/desativar funcionalidades dinamicamente
+    - 🎨 **Server-Driven UI**: Configurar interfaces remotamente
+    - 📱 **Componentes Dinâmicos**: Criar e gerenciar componentes UI
+    - 🖥️ **Telas Configuráveis**: Definir layouts de tela via servidor
+    - ⚡ **WebSocket Real-time**: Atualizações em tempo real
+    - 📊 **Analytics**: Métricas de uso e performance
+    
+  contact:
+    name: SuperAppBet Team
+    email: tech@superappbet.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: http://localhost:3001/api
+    description: Development Server
+  - url: https://api.superappbet.com/api
+    description: Production Server
+
+tags:
+  - name: Health
+    description: Sistema de saúde e status
+  - name: Modules
+    description: Gerenciamento de módulos/micro frontends
+  - name: SDUI
+    description: Server-Driven UI configuration
+  - name: Components
+    description: Componentes dinâmicos
+  - name: Screens
+    description: Configuração de telas
+  - name: Analytics
+    description: Métricas e analytics
+  - name: WebSocket
+    description: Comunicação em tempo real
+
+paths:
+  # Health Check
+  /health:
+    get:
+      tags: [Health]
+      summary: Health check do servidor
+      description: Verifica se o servidor está funcionando corretamente
+      responses:
+        '200':
+          description: Servidor funcionando normalmente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+
+  # Modules Management
+  /modules:
+    get:
+      tags: [Modules]
+      summary: Listar todos os módulos disponíveis
+      description: Retorna lista completa de módulos registrados no sistema
+      responses:
+        '200':
+          description: Lista de módulos retornada com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Module'
+                  count:
+                    type: integer
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+    post:
+      tags: [Modules]
+      summary: Criar novo módulo
+      description: Registra um novo módulo no sistema
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateModuleRequest'
+      responses:
+        '200':
+          description: Módulo criado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /modules/enabled:
+    get:
+      tags: [Modules]
+      summary: Listar módulos habilitados
+      description: Retorna módulos habilitados para um usuário/segmento específico
+      parameters:
+        - name: userId
+          in: query
+          description: ID do usuário
+          schema:
+            type: string
+        - name: segment
+          in: query
+          description: Segmento do usuário
+          schema:
+            type: string
+            default: default
+        - name: region
+          in: query
+          description: Região do usuário
+          schema:
+            type: string
+            default: BR
+      responses:
+        '200':
+          description: Módulos habilitados retornados com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/EnabledModule'
+                  metadata:
+                    $ref: '#/components/schemas/QueryMetadata'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /modules/enable/{moduleId}:
+    post:
+      tags: [Modules]
+      summary: Habilitar módulo
+      description: Habilita um módulo específico para usuário/segmento
+      parameters:
+        - name: moduleId
+          in: path
+          required: true
+          description: ID do módulo
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EnableModuleRequest'
+      responses:
+        '200':
+          description: Módulo habilitado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /modules/disable/{moduleId}:
+    post:
+      tags: [Modules]
+      summary: Desabilitar módulo
+      description: Desabilita um módulo específico
+      parameters:
+        - name: moduleId
+          in: path
+          required: true
+          description: ID do módulo
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DisableModuleRequest'
+      responses:
+        '200':
+          description: Módulo desabilitado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /modules/{moduleId}/config:
+    get:
+      tags: [Modules]
+      summary: Obter configuração do módulo
+      description: Retorna a configuração atual de um módulo específico
+      parameters:
+        - name: moduleId
+          in: path
+          required: true
+          description: ID do módulo
+          schema:
+            type: string
+        - name: userId
+          in: query
+          description: ID do usuário
+          schema:
+            type: string
+        - name: segment
+          in: query
+          description: Segmento
+          schema:
+            type: string
+            default: default
+        - name: region
+          in: query
+          description: Região
+          schema:
+            type: string
+            default: BR
+      responses:
+        '200':
+          description: Configuração retornada com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+    put:
+      tags: [Modules]
+      summary: Atualizar configuração do módulo
+      description: Atualiza a configuração de um módulo específico
+      parameters:
+        - name: moduleId
+          in: path
+          required: true
+          description: ID do módulo
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateConfigRequest'
+      responses:
+        '200':
+          description: Configuração atualizada com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /modules/{moduleId}/actions/{actionType}:
+    post:
+      tags: [Modules]
+      summary: Executar ação do módulo
+      description: Executa uma ação específica de um módulo
+      parameters:
+        - name: moduleId
+          in: path
+          required: true
+          description: ID do módulo
+          schema:
+            type: string
+        - name: actionType
+          in: path
+          required: true
+          description: Tipo da ação
+          schema:
+            type: string
+            enum: [place-bet, add-to-betslip, remove-from-betslip, play-game, deposit, withdraw]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExecuteActionRequest'
+      responses:
+        '200':
+          description: Ação executada com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActionResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /modules/{moduleId}/analytics:
+    get:
+      tags: [Modules, Analytics]
+      summary: Obter analytics do módulo
+      description: Retorna métricas de uso e performance de um módulo
+      parameters:
+        - name: moduleId
+          in: path
+          required: true
+          description: ID do módulo
+          schema:
+            type: string
+        - name: startDate
+          in: query
+          description: Data inicial (ISO 8601)
+          schema:
+            type: string
+            format: date-time
+        - name: endDate
+          in: query
+          description: Data final (ISO 8601)
+          schema:
+            type: string
+            format: date-time
+        - name: segment
+          in: query
+          description: Segmento
+          schema:
+            type: string
+        - name: region
+          in: query
+          description: Região
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Analytics retornados com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/ModuleAnalytics'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /modules/{moduleId}/feature-flag:
+    post:
+      tags: [Modules]
+      summary: Configurar feature flag
+      description: Define ou atualiza uma feature flag para um módulo
+      parameters:
+        - name: moduleId
+          in: path
+          required: true
+          description: ID do módulo
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FeatureFlagRequest'
+      responses:
+        '200':
+          description: Feature flag configurada com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  # SDUI Configuration
+  /sdui/config:
+    get:
+      tags: [SDUI]
+      summary: Obter configuração completa do SDUI
+      description: Retorna toda a configuração necessária para inicializar a aplicação
+      responses:
+        '200':
+          description: Configuração SDUI retornada com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/SDUIConfig'
+                  timestamp:
+                    type: string
+                    format: date-time
+                  version:
+                    type: string
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /sdui/screen/{screenName}:
+    get:
+      tags: [SDUI]
+      summary: Obter configuração de tela específica
+      description: Retorna a configuração de uma tela específica
+      parameters:
+        - name: screenName
+          in: path
+          required: true
+          description: Nome da tela
+          schema:
+            type: string
+            enum: [home, sports, casino, lottery, profile]
+        - name: variant
+          in: query
+          description: Variante da tela
+          schema:
+            type: string
+            default: default
+        - name: userId
+          in: query
+          description: ID do usuário
+          schema:
+            type: string
+        - name: experimentGroup
+          in: query
+          description: Grupo de experimento A/B
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Configuração da tela retornada com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/ScreenConfig'
+                  metadata:
+                    $ref: '#/components/schemas/ScreenMetadata'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+    put:
+      tags: [SDUI]
+      summary: Atualizar configuração de tela
+      description: Atualiza a configuração de uma tela (endpoint administrativo)
+      parameters:
+        - name: screenName
+          in: path
+          required: true
+          description: Nome da tela
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateScreenRequest'
+      responses:
+        '200':
+          description: Tela atualizada com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /sdui/screen/{screenName}/variant:
+    post:
+      tags: [SDUI]
+      summary: Criar variante A/B de tela
+      description: Cria uma nova variante de tela para testes A/B
+      parameters:
+        - name: screenName
+          in: path
+          required: true
+          description: Nome da tela
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateVariantRequest'
+      responses:
+        '200':
+          description: Variante criada com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /sdui/components:
+    get:
+      tags: [SDUI, Components]
+      summary: Obter biblioteca de componentes
+      description: Retorna todos os componentes disponíveis para SDUI
+      responses:
+        '200':
+          description: Biblioteca de componentes retornada com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SDUIComponent'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+    post:
+      tags: [SDUI, Components]
+      summary: Registrar novo tipo de componente
+      description: Registra um novo tipo de componente no sistema SDUI
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterComponentRequest'
+      responses:
+        '200':
+          description: Componente registrado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /sdui/theme:
+    get:
+      tags: [SDUI]
+      summary: Obter configuração de tema
+      description: Retorna a configuração do tema atual
+      parameters:
+        - name: variant
+          in: query
+          description: Variante do tema
+          schema:
+            type: string
+            default: default
+            enum: [default, dark, light, betting]
+      responses:
+        '200':
+          description: Configuração de tema retornada com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/ThemeConfig'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+    put:
+      tags: [SDUI]
+      summary: Atualizar configuração de tema
+      description: Atualiza a configuração do tema
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateThemeRequest'
+      responses:
+        '200':
+          description: Tema atualizado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /sdui/refresh:
+    post:
+      tags: [SDUI]
+      summary: Forçar refresh nos clientes
+      description: Envia sinal de refresh para todos os clientes conectados via WebSocket
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reason:
+                  type: string
+                  description: Motivo do refresh
+                  default: Manual refresh
+      responses:
+        '200':
+          description: Sinal de refresh enviado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  # Components Management
+  /components:
+    get:
+      tags: [Components]
+      summary: Listar todos os componentes
+      description: Retorna lista de componentes com filtros opcionais
+      parameters:
+        - name: category
+          in: query
+          description: Filtrar por categoria
+          schema:
+            type: string
+            enum: [promotional, betting, casino, layout, navigation]
+        - name: platform
+          in: query
+          description: Filtrar por plataforma
+          schema:
+            type: string
+            enum: [ios, android, web, all]
+        - name: status
+          in: query
+          description: Filtrar por status
+          schema:
+            type: string
+            enum: [active, inactive, deleted]
+            default: active
+      responses:
+        '200':
+          description: Lista de componentes retornada com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Component'
+                  count:
+                    type: integer
+                  filters:
+                    type: object
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+    post:
+      tags: [Components]
+      summary: Criar novo componente
+      description: Cria um novo componente no sistema
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateComponentRequest'
+      responses:
+        '200':
+          description: Componente criado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /components/{componentId}:
+    get:
+      tags: [Components]
+      summary: Obter componente por ID
+      description: Retorna um componente específico
+      parameters:
+        - name: componentId
+          in: path
+          required: true
+          description: ID do componente
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Componente retornado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/Component'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+    put:
+      tags: [Components]
+      summary: Atualizar componente
+      description: Atualiza um componente existente
+      parameters:
+        - name: componentId
+          in: path
+          required: true
+          description: ID do componente
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateComponentRequest'
+      responses:
+        '200':
+          description: Componente atualizado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+    delete:
+      tags: [Components]
+      summary: Deletar componente
+      description: Remove um componente (soft delete por padrão)
+      parameters:
+        - name: componentId
+          in: path
+          required: true
+          description: ID do componente
+          schema:
+            type: string
+        - name: permanent
+          in: query
+          description: Exclusão permanente
+          schema:
+            type: boolean
+            default: false
+      responses:
+        '200':
+          description: Componente deletado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /components/{componentId}/clone:
+    post:
+      tags: [Components]
+      summary: Clonar componente
+      description: Cria uma cópia de um componente existente
+      parameters:
+        - name: componentId
+          in: path
+          required: true
+          description: ID do componente original
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CloneComponentRequest'
+      responses:
+        '200':
+          description: Componente clonado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /components/{componentId}/variants:
+    get:
+      tags: [Components]
+      summary: Listar variantes do componente
+      description: Retorna todas as variantes de um componente
+      parameters:
+        - name: componentId
+          in: path
+          required: true
+          description: ID do componente
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Variantes retornadas com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      componentId:
+                        type: string
+                      variants:
+                        type: array
+                        items:
+                          type: string
+                      defaultVariant:
+                        type: string
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+    post:
+      tags: [Components]
+      summary: Adicionar variante ao componente
+      description: Adiciona uma nova variante a um componente existente
+      parameters:
+        - name: componentId
+          in: path
+          required: true
+          description: ID do componente
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddVariantRequest'
+      responses:
+        '200':
+          description: Variante adicionada com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /components/{componentId}/analytics:
+    get:
+      tags: [Components, Analytics]
+      summary: Analytics do componente
+      description: Retorna métricas de uso e performance de um componente
+      parameters:
+        - name: componentId
+          in: path
+          required: true
+          description: ID do componente
+          schema:
+            type: string
+        - name: startDate
+          in: query
+          description: Data inicial
+          schema:
+            type: string
+            format: date-time
+        - name: endDate
+          in: query
+          description: Data final
+          schema:
+            type: string
+            format: date-time
+        - name: platform
+          in: query
+          description: Filtrar por plataforma
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Analytics retornados com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/ComponentAnalytics'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /components/meta/categories:
+    get:
+      tags: [Components]
+      summary: Obter categorias de componentes
+      description: Retorna estatísticas das categorias de componentes
+      responses:
+        '200':
+          description: Categorias retornadas com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      categories:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/CategoryStats'
+                      totalComponents:
+                        type: integer
+                      activeComponents:
+                        type: integer
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  # Screens Management
+  /screens/home:
+    get:
+      tags: [Screens]
+      summary: Configuração da tela inicial
+      description: Retorna a configuração personalizada da tela inicial
+      parameters:
+        - name: userId
+          in: query
+          description: ID do usuário
+          schema:
+            type: string
+        - name: segment
+          in: query
+          description: Segmento do usuário
+          schema:
+            type: string
+            default: default
+        - name: variant
+          in: query
+          description: Variante da tela
+          schema:
+            type: string
+            default: default
+      responses:
+        '200':
+          description: Configuração da tela inicial retornada com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScreenResponse'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /screens/sports:
+    get:
+      tags: [Screens]
+      summary: Configuração da tela de esportes
+      description: Retorna a configuração da tela de apostas esportivas
+      parameters:
+        - name: userId
+          in: query
+          description: ID do usuário
+          schema:
+            type: string
+        - name: sport
+          in: query
+          description: Esporte específico
+          schema:
+            type: string
+            enum: [football, basketball, tennis, mma, esports]
+        - name: live
+          in: query
+          description: Mostrar eventos ao vivo
+          schema:
+            type: boolean
+            default: false
+      responses:
+        '200':
+          description: Configuração da tela de esportes retornada com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScreenResponse'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /screens/casino:
+    get:
+      tags: [Screens]
+      summary: Configuração da tela de cassino
+      description: Retorna a configuração da tela de jogos de cassino
+      parameters:
+        - name: userId
+          in: query
+          description: ID do usuário
+          schema:
+            type: string
+        - name: category
+          in: query
+          description: Categoria de jogos
+          schema:
+            type: string
+            enum: [featured, slots, table-games, live-casino]
+            default: featured
+        - name: gameType
+          in: query
+          description: Tipo específico de jogo
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Configuração da tela de cassino retornada com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScreenResponse'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /screens/lottery:
+    get:
+      tags: [Screens]
+      summary: Configuração da tela de loteria
+      description: Retorna a configuração da tela de jogos de loteria
+      parameters:
+        - name: userId
+          in: query
+          description: ID do usuário
+          schema:
+            type: string
+        - name: region
+          in: query
+          description: Região/país
+          schema:
+            type: string
+            default: BR
+      responses:
+        '200':
+          description: Configuração da tela de loteria retornada com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScreenResponse'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /screens/profile:
+    get:
+      tags: [Screens]
+      summary: Configuração da tela de perfil
+      description: Retorna a configuração personalizada da tela de perfil do usuário
+      parameters:
+        - name: userId
+          in: query
+          required: true
+          description: ID do usuário
+          schema:
+            type: string
+        - name: section
+          in: query
+          description: Seção específica do perfil
+          schema:
+            type: string
+            enum: [overview, betting-history, financial, settings]
+            default: overview
+      responses:
+        '200':
+          description: Configuração da tela de perfil retornada com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScreenResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /screens/{screenName}/layout:
+    put:
+      tags: [Screens]
+      summary: Atualizar layout da tela
+      description: Atualiza o layout de uma tela específica (endpoint administrativo)
+      parameters:
+        - name: screenName
+          in: path
+          required: true
+          description: Nome da tela
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateLayoutRequest'
+      responses:
+        '200':
+          description: Layout atualizado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /screens/{screenName}/components:
+    post:
+      tags: [Screens]
+      summary: Adicionar componente à tela
+      description: Adiciona um novo componente a uma tela específica
+      parameters:
+        - name: screenName
+          in: path
+          required: true
+          description: Nome da tela
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddComponentRequest'
+      responses:
+        '200':
+          description: Componente adicionado à tela com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /screens/{screenName}/components/{componentId}:
+    put:
+      tags: [Screens]
+      summary: Atualizar componente na tela
+      description: Atualiza propriedades de um componente em uma tela
+      parameters:
+        - name: screenName
+          in: path
+          required: true
+          description: Nome da tela
+          schema:
+            type: string
+        - name: componentId
+          in: path
+          required: true
+          description: ID do componente
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateComponentInScreenRequest'
+      responses:
+        '200':
+          description: Componente atualizado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+    delete:
+      tags: [Screens]
+      summary: Remover componente da tela
+      description: Remove um componente de uma tela específica
+      parameters:
+        - name: screenName
+          in: path
+          required: true
+          description: Nome da tela
+          schema:
+            type: string
+        - name: componentId
+          in: path
+          required: true
+          description: ID do componente
+          schema:
+            type: string
+        - name: variant
+          in: query
+          description: Variante da tela
+          schema:
+            type: string
+            default: default
+      responses:
+        '200':
+          description: Componente removido com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /screens/{screenName}/ab-test:
+    post:
+      tags: [Screens]
+      summary: Criar teste A/B para tela
+      description: Cria um novo teste A/B para uma tela específica
+      parameters:
+        - name: screenName
+          in: path
+          required: true
+          description: Nome da tela
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateABTestRequest'
+      responses:
+        '200':
+          description: Teste A/B criado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /screens/{screenName}/metrics:
+    get:
+      tags: [Screens, Analytics]
+      summary: Métricas de performance da tela
+      description: Retorna métricas detalhadas de uso e performance de uma tela
+      parameters:
+        - name: screenName
+          in: path
+          required: true
+          description: Nome da tela
+          schema:
+            type: string
+        - name: startDate
+          in: query
+          description: Data inicial
+          schema:
+            type: string
+            format: date-time
+        - name: endDate
+          in: query
+          description: Data final
+          schema:
+            type: string
+            format: date-time
+        - name: segment
+          in: query
+          description: Segmento
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Métricas retornadas com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/ScreenMetrics'
+                  metadata:
+                    type: object
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /screens/templates:
+    get:
+      tags: [Screens]
+      summary: Listar templates de tela
+      description: Retorna todos os templates de tela disponíveis
+      responses:
+        '200':
+          description: Templates retornados com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ScreenTemplate'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /screens/{screenName}/from-template:
+    post:
+      tags: [Screens]
+      summary: Criar tela a partir de template
+      description: Cria uma nova configuração de tela baseada em um template
+      parameters:
+        - name: screenName
+          in: path
+          required: true
+          description: Nome da nova tela
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateFromTemplateRequest'
+      responses:
+        '200':
+          description: Tela criada com sucesso a partir do template
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+components:
+  schemas:
+    # Base Response Schemas
+    HealthResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: OK
+        timestamp:
+          type: string
+          format: date-time
+        service:
+          type: string
+          example: SuperAppBet SDUI Server
+        version:
+          type: string
+          example: 1.0.0
+
+    SuccessResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+        message:
+          type: string
+
+    ErrorResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+
+    # Module Schemas
+    Module:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        version:
+          type: string
+        description:
+          type: string
+        category:
+          type: string
+          enum: [betting, casino, lottery, payments, core]
+        components:
+          type: array
+          items:
+            type: string
+        screens:
+          type: array
+          items:
+            type: string
+        actions:
+          type: array
+          items:
+            $ref: '#/components/schemas/ModuleAction'
+        dependencies:
+          type: array
+          items:
+            type: string
+        defaultConfig:
+          type: object
+        createdAt:
+          type: string
+          format: date-time
+        createdBy:
+          type: string
+        status:
+          type: string
+          enum: [active, inactive, deprecated]
+
+    EnabledModule:
+      allOf:
+        - $ref: '#/components/schemas/Module'
+        - type: object
+          properties:
+            config:
+              type: object
+            enabledAt:
+              type: string
+              format: date-time
+            enabledBy:
+              type: string
+
+    ModuleAction:
+      type: object
+      properties:
+        type:
+          type: string
+        handler:
+          type: string
+        description:
+          type: string
+        parameters:
+          type: object
+
+    CreateModuleRequest:
+      type: object
+      required: [name, version, description, category]
+      properties:
+        name:
+          type: string
+        version:
+          type: string
+        description:
+          type: string
+        category:
+          type: string
+          enum: [betting, casino, lottery, payments, core]
+        components:
+          type: array
+          items:
+            type: string
+          default: []
+        screens:
+          type: array
+          items:
+            type: string
+          default: []
+        actions:
+          type: array
+          items:
+            $ref: '#/components/schemas/ModuleAction'
+          default: []
+        dependencies:
+          type: array
+          items:
+            type: string
+          default: []
+        defaultConfig:
+          type: object
+          default: {}
+
+    EnableModuleRequest:
+      type: object
+      properties:
+        userId:
+          type: string
+        segment:
+          type: string
+          default: default
+        region:
+          type: string
+          default: BR
+        config:
+          type: object
+          default: {}
+
+    DisableModuleRequest:
+      type: object
+      properties:
+        userId:
+          type: string
+        segment:
+          type: string
+          default: default
+        region:
+          type: string
+          default: BR
+        reason:
+          type: string
+
+    UpdateConfigRequest:
+      type: object
+      required: [config]
+      properties:
+        config:
+          type: object
+        segment:
+          type: string
+          default: default
+        region:
+          type: string
+          default: BR
+
+    ExecuteActionRequest:
+      type: object
+      required: [payload, userId]
+      properties:
+        payload:
+          type: object
+        userId:
+          type: string
+        metadata:
+          type: object
+          default: {}
+
+    ActionResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+        metadata:
+          type: object
+          properties:
+            moduleId:
+              type: string
+            actionType:
+              type: string
+            executedAt:
+              type: string
+              format: date-time
+
+    FeatureFlagRequest:
+      type: object
+      required: [flagName, enabled]
+      properties:
+        flagName:
+          type: string
+        enabled:
+          type: boolean
+        conditions:
+          type: object
+          default: {}
+
+    ModuleAnalytics:
+      type: object
+      properties:
+        moduleId:
+          type: string
+        name:
+          type: string
+        period:
+          $ref: '#/components/schemas/DatePeriod'
+        metrics:
+          $ref: '#/components/schemas/UsageMetrics'
+        performance:
+          $ref: '#/components/schemas/PerformanceMetrics'
+
+    # SDUI Schemas
+    SDUIConfig:
+      type: object
+      properties:
+        components:
+          type: array
+          items:
+            $ref: '#/components/schemas/SDUIComponent'
+        screens:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/ScreenConfig'
+        themes:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/ThemeConfig'
+        modules:
+          type: array
+          items:
+            $ref: '#/components/schemas/EnabledModule'
+
+    SDUIComponent:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        type:
+          type: string
+        schema:
+          type: object
+        defaultProps:
+          type: object
+        category:
+          type: string
+        variants:
+          type: array
+          items:
+            type: string
+        platforms:
+          type: array
+          items:
+            type: string
+
+    ScreenConfig:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        layout:
+          $ref: '#/components/schemas/LayoutConfig'
+        components:
+          type: array
+          items:
+            $ref: '#/components/schemas/ComponentInstance'
+        metadata:
+          type: object
+
+    LayoutConfig:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [vertical, horizontal, grid, stack]
+        spacing:
+          type: number
+        padding:
+          type: object
+        backgroundColor:
+          type: string
+        sections:
+          type: array
+          items:
+            type: object
+
+    ComponentInstance:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+        props:
+          type: object
+        position:
+          type: object
+        conditions:
+          type: object
+        variant:
+          type: string
+
+    ThemeConfig:
+      type: object
+      properties:
+        colors:
+          $ref: '#/components/schemas/ColorPalette'
+        typography:
+          $ref: '#/components/schemas/Typography'
+        spacing:
+          $ref: '#/components/schemas/Spacing'
+        components:
+          type: object
+
+    ColorPalette:
+      type: object
+      properties:
+        primary:
+          type: string
+        secondary:
+          type: string
+        accent:
+          type: string
+        background:
+          type: object
+        text:
+          type: object
+        interactive:
+          type: object
+        status:
+          type: object
+
+    Typography:
+      type: object
+      properties:
+        fontFamily:
+          type: object
+        fontSize:
+          type: object
+        fontWeight:
+          type: object
+        lineHeight:
+          type: object
+
+    Spacing:
+      type: object
+      properties:
+        xs:
+          type: number
+        sm:
+          type: number
+        md:
+          type: number
+        lg:
+          type: number
+        xl:
+          type: number
+
+    UpdateScreenRequest:
+      type: object
+      properties:
+        components:
+          type: array
+          items:
+            $ref: '#/components/schemas/ComponentInstance'
+        layout:
+          $ref: '#/components/schemas/LayoutConfig'
+        metadata:
+          type: object
+
+    CreateVariantRequest:
+      type: object
+      required: [variantName, config]
+      properties:
+        variantName:
+          type: string
+        config:
+          $ref: '#/components/schemas/ScreenConfig'
+        trafficSplit:
+          type: number
+          minimum: 0
+          maximum: 100
+          default: 50
+
+    RegisterComponentRequest:
+      type: object
+      required: [name, schema]
+      properties:
+        name:
+          type: string
+        schema:
+          type: object
+        defaultProps:
+          type: object
+          default: {}
+        category:
+          type: string
+
+    UpdateThemeRequest:
+      type: object
+      properties:
+        variant:
+          type: string
+          default: default
+        colors:
+          $ref: '#/components/schemas/ColorPalette'
+        typography:
+          $ref: '#/components/schemas/Typography'
+        spacing:
+          $ref: '#/components/schemas/Spacing'
+
+    # Components Schemas
+    Component:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        type:
+          type: string
+        description:
+          type: string
+        category:
+          type: string
+          enum: [promotional, betting, casino, layout, navigation]
+        schema:
+          type: object
+        defaultProps:
+          type: object
+        variants:
+          type: array
+          items:
+            type: string
+        platforms:
+          type: array
+          items:
+            type: string
+        conditions:
+          type: object
+        createdAt:
+          type: string
+          format: date-time
+        createdBy:
+          type: string
+        status:
+          type: string
+          enum: [active, inactive, deleted]
+        version:
+          type: integer
+
+    CreateComponentRequest:
+      type: object
+      required: [name, type, description, category, schema]
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+        description:
+          type: string
+        category:
+          type: string
+          enum: [promotional, betting, casino, layout, navigation]
+        schema:
+          type: object
+        defaultProps:
+          type: object
+          default: {}
+        variants:
+          type: array
+          items:
+            type: string
+          default: ["default"]
+        platforms:
+          type: array
+          items:
+            type: string
+          default: ["ios", "android"]
+        conditions:
+          type: object
+          default: {}
+
+    UpdateComponentRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+        description:
+          type: string
+        category:
+          type: string
+        schema:
+          type: object
+        defaultProps:
+          type: object
+        variants:
+          type: array
+          items:
+            type: string
+        platforms:
+          type: array
+          items:
+            type: string
+        conditions:
+          type: object
+
+    CloneComponentRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        modifications:
+          type: object
+          default: {}
+
+    AddVariantRequest:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+        props:
+          type: object
+          default: {}
+        conditions:
+          type: object
+          default: {}
+
+    ComponentAnalytics:
+      type: object
+      properties:
+        componentId:
+          type: string
+        name:
+          type: string
+        period:
+          $ref: '#/components/schemas/DatePeriod'
+        metrics:
+          $ref: '#/components/schemas/ComponentMetrics'
+        variantPerformance:
+          type: array
+          items:
+            $ref: '#/components/schemas/VariantMetrics'
+        platformMetrics:
+          type: array
+          items:
+            $ref: '#/components/schemas/PlatformMetrics'
+
+    ComponentMetrics:
+      type: object
+      properties:
+        impressions:
+          type: integer
+        interactions:
+          type: integer
+        conversionRate:
+          type: string
+        averageTimeVisible:
+          type: integer
+        errorRate:
+          type: string
+
+    VariantMetrics:
+      type: object
+      properties:
+        variant:
+          type: string
+        impressions:
+          type: integer
+        conversionRate:
+          type: string
+
+    PlatformMetrics:
+      type: object
+      properties:
+        platform:
+          type: string
+        impressions:
+          type: integer
+        performance:
+          type: string
+
+    CategoryStats:
+      type: object
+      properties:
+        name:
+          type: string
+        count:
+          type: integer
+        activeCount:
+          type: integer
+
+    # Screens Schemas
+    ScreenResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          $ref: '#/components/schemas/ScreenConfig'
+        metadata:
+          $ref: '#/components/schemas/ScreenMetadata'
+
+    ScreenMetadata:
+      type: object
+      properties:
+        screenName:
+          type: string
+        generatedAt:
+          type: string
+          format: date-time
+        variant:
+          type: string
+        segment:
+          type: string
+
+    UpdateLayoutRequest:
+      type: object
+      required: [layout]
+      properties:
+        layout:
+          $ref: '#/components/schemas/LayoutConfig'
+        variant:
+          type: string
+          default: default
+
+    AddComponentRequest:
+      type: object
+      required: [componentType]
+      properties:
+        componentType:
+          type: string
+        props:
+          type: object
+          default: {}
+        position:
+          type: object
+        conditions:
+          type: object
+          default: {}
+        variant:
+          type: string
+          default: default
+
+    UpdateComponentInScreenRequest:
+      type: object
+      properties:
+        props:
+          type: object
+        conditions:
+          type: object
+        variant:
+          type: string
+          default: default
+
+    CreateABTestRequest:
+      type: object
+      required: [testName, variants]
+      properties:
+        testName:
+          type: string
+        variants:
+          type: array
+          items:
+            type: object
+        trafficSplit:
+          type: number
+          minimum: 0
+          maximum: 100
+          default: 50
+        conditions:
+          type: object
+          default: {}
+        duration:
+          type: integer
+          description: Duration in days
+          default: 7
+
+    ScreenMetrics:
+      type: object
+      properties:
+        screenName:
+          type: string
+        period:
+          $ref: '#/components/schemas/DatePeriod'
+        pageViews:
+          type: integer
+        uniqueVisitors:
+          type: integer
+        averageTimeOnScreen:
+          type: integer
+        bounceRate:
+          type: string
+        conversionRate:
+          type: string
+        componentMetrics:
+          type: array
+          items:
+            type: object
+
+    ScreenTemplate:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        category:
+          type: string
+        layout:
+          $ref: '#/components/schemas/LayoutConfig'
+        components:
+          type: array
+          items:
+            $ref: '#/components/schemas/ComponentInstance'
+        previewUrl:
+          type: string
+
+    CreateFromTemplateRequest:
+      type: object
+      required: [templateId]
+      properties:
+        templateId:
+          type: string
+        customizations:
+          type: object
+          default: {}
+
+    # Common Schemas
+    DatePeriod:
+      type: object
+      properties:
+        startDate:
+          type: string
+          format: date-time
+        endDate:
+          type: string
+          format: date-time
+
+    UsageMetrics:
+      type: object
+      properties:
+        activeUsers:
+          type: integer
+        sessionsCount:
+          type: integer
+        averageSessionDuration:
+          type: integer
+        actionCount:
+          type: integer
+
+    PerformanceMetrics:
+      type: object
+      properties:
+        averageResponseTime:
+          type: integer
+        errorRate:
+          type: string
+        throughput:
+          type: integer
+        availability:
+          type: string
+
+    QueryMetadata:
+      type: object
+      properties:
+        userId:
+          type: string
+        segment:
+          type: string
+        region:
+          type: string
+        appliedAt:
+          type: string
+          format: date-time
+
+  responses:
+    BadRequest:
+      description: Requisição inválida
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            success: false
+            error: Parâmetros inválidos
+            timestamp: "2023-12-01T10:00:00Z"
+
+    NotFound:
+      description: Recurso não encontrado
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            success: false
+            error: Recurso não encontrado
+            timestamp: "2023-12-01T10:00:00Z"
+
+    ServerError:
+      description: Erro interno do servidor
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            success: false
+            error: Erro interno do servidor
+            timestamp: "2023-12-01T10:00:00Z"
+
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: API Key para autenticação de endpoints administrativos
+
+    AdminAuth:
+      type: apiKey
+      in: header
+      name: X-Admin-User
+      description: Identificação do usuário administrador para auditoria
+
+# WebSocket Events Documentation
+x-websocket-events:
+  description: |
+    O SuperAppBet SDUI Server oferece comunicação em tempo real via WebSocket para:
+    
+    ## Eventos do Cliente → Servidor
+    - `join_room` - Entrar em sala específica para atualizações
+    - `leave_room` - Sair de sala
+    - `heartbeat` - Manter conexão ativa
+    
+    ## Eventos do Servidor → Cliente
+    - `module_enabled` - Módulo foi habilitado
+    - `module_disabled` - Módulo foi desabilitado  
+    - `module_config_updated` - Configuração do módulo atualizada
+    - `screen_updated` - Tela foi atualizada
+    - `screen_layout_updated` - Layout da tela atualizado
+    - `component_created` - Novo componente criado
+    - `component_updated` - Componente atualizado
+    - `component_deleted` - Componente removido
+    - `component_added` - Componente adicionado à tela
+    - `component_removed` - Componente removido da tela
+    - `theme_updated` - Tema atualizado
+    - `feature_flag_updated` - Feature flag atualizada
+    - `force_refresh` - Forçar refresh da aplicação
+    
+    ## Conexão WebSocket
+    ```javascript
+    const socket = io('ws://localhost:3001');
+    
+    socket.on('module_enabled', (data) => {
+      console.log('Módulo habilitado:', data);
+    });
+    
+    socket.on('screen_updated', (data) => {
+      console.log('Tela atualizada:', data);
+    });
+    ```
+
+security:
+  - ApiKeyAuth: []
+  - AdminAuth: []

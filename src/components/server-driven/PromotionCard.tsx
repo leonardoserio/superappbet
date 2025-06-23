@@ -19,7 +19,7 @@ interface PromotionCardProps extends ServerDrivenComponentProps {
 }
 
 export const PromotionCard: React.FC<PromotionCardProps> = ({
-  schema,
+  schema: _schema,
   title,
   description,
   imageUrl,
@@ -53,7 +53,7 @@ export const PromotionCard: React.FC<PromotionCardProps> = ({
   };
 
   const isHighPriority = priority >= 8;
-  const isMediumPriority = priority >= 5;
+  // const isMediumPriority = priority >= 5;
 
   const styles = StyleSheet.create({
     container: {

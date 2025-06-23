@@ -138,7 +138,7 @@ class ScreenStore {
                   id: uuidv4(),
                   type: 'PromotionCard',
                   props: {
-                    title: 'Cashback Semanal',
+                    title: 'Teste novo card',
                     description: '40% de volta em todas as apostas esportivas',
                     imageUrl: 'https://via.placeholder.com/300x150/28a745/ffffff?text=Cashback',
                     ctaText: 'Saiba Mais',
@@ -507,81 +507,44 @@ class ScreenStore {
 
   getHomeScreenConfig(options = {}) {
     const { userId, segment, variant } = options;
-    const screen = this.screens.get('home');
-    let config = screen[variant] || screen.default;
 
-    // Personalize based on user segment
-    if (segment === 'vip') {
-      config = this.addVIPElements(config);
-    } else if (segment === 'new-user') {
-      config = this.addNewUserElements(config);
-    }
-
-    return this.personalizeForUser(config, userId);
-  }
-
-  getSportsScreenConfig(options = {}) {
-    const { userId, sport, showLive } = options;
-    const screen = this.screens.get('sports');
-    let config = { ...screen.default };
-
-    // Filter tabs based on sport preference
-    if (sport) {
-      config.layout.tabs = config.layout.tabs.filter(tab => 
-        tab.id === 'live' || tab.id === sport
-      );
-    }
-
-    // Prioritize live tab if requested
-    if (showLive) {
-      const liveTab = config.layout.tabs.find(tab => tab.id === 'live');
-      if (liveTab) {
-        config.layout.tabs = [liveTab, ...config.layout.tabs.filter(tab => tab.id !== 'live')];
-      }
-    }
-
-    return config;
-  }
-
-  getCasinoScreenConfig(options = {}) {
-    const { userId, category, gameType } = options;
-    const screen = this.screens.get('casino');
-    let config = { ...screen.default };
-
-    // Filter sections based on category
-    if (category && category !== 'featured') {
-      config.layout.sections = config.layout.sections.filter(section => 
-        section.id === category || section.id === 'jackpot'
-      );
-    }
-
-    return config;
-  }
-
-  getLotteryScreenConfig(options = {}) {
-    const { userId, region } = options;
-    
-    // Generate lottery screen based on region
     return {
       layout: {
         type: 'scroll',
+        backgroundColor: '#fafafa',
         sections: [
+          // Hero Section with Welcome Message
           {
-            id: 'hero',
-            type: 'hero',
+            id: 'hero-section',
+            type: 'r',
+            style: { padding: 0 },
             components: [
               {
                 id: uuidv4(),
                 type: 'Container',
-                props: { variant: 'card', padding: 'lg' },
+                props: {
+                  variant: 'default',
+                  style: {
+                    background: 'linear-gradient(135deg, #0ea5e9, #0284c7)',
+                    padding: 20,
+                    paddingTop: 60,
+                    paddingBottom: 30
+                  }
+                },
                 children: [
                   {
                     id: uuidv4(),
                     type: 'Text',
                     props: {
                       variant: 'title',
-                      text: '🎲 Loterias Nacionais',
-                      textAlign: 'center'
+                      text: '🏆 SuperAppBet',
+                      style: { 
+                        fontSize: 28, 
+                        fontWeight: '800', 
+                        color: '#000', 
+                        textAlign: 'center',
+                        marginBottom: 8
+                      }
                     }
                   },
                   {
@@ -589,24 +552,2957 @@ class ScreenStore {
                     type: 'Text',
                     props: {
                       variant: 'subtitle',
-                      text: 'Aposte nos maiores prêmios do Brasil',
-                      textAlign: 'center'
+                      text: 'Bem-vindo ao futuro das apostas',
+                      style: { 
+                        fontSize: 16, 
+                        color: 'rgba(0, 0, 0, 0.9)', 
+                        textAlign: 'center'
+                      }
                     }
                   }
                 ]
               }
             ]
           },
+
+          // Quick Actions Section
           {
-            id: 'games',
+            id: 'quick-actions',
+            type: 'flex',
+            style: { paddingHorizontal: 16, marginTop: 20 },
+            components: [
+              {
+                id: uuidv4(),
+                type: 'Text',
+                props: {
+                  variant: 'title',
+                  text: 'Ações Rápidas',
+                  style: { 
+                    fontSize: 20, 
+                    fontWeight: '700', 
+                    color: '#171717', 
+                    marginBottom: 16 
+                  }
+                }
+              },
+              {
+                id: uuidv4(),
+                type: 'Container',
+                props: {
+                  variant: 'default',
+                  style: { 
+                    flexDirection: 'row', 
+                    justifyContent: 'space-between',
+                    marginBottom: 20
+                  }
+                },
+                children: [
+                  // Sports Quick Action
+                  {
+                    id: uuidv4(),
+                    type: 'Container',
+                    props: {
+                      variant: 'card',
+                      style: {
+                        flex: 1,
+                        backgroundColor: '#ffffff',
+                        borderRadius: 16,
+                        padding: 20,
+                        marginRight: 8,
+                        alignItems: 'center',
+                        elevation: 2,
+                        shadowColor: '#000000',
+                        shadowOffset: { width: 0, height: 2 },
+                        shadowOpacity: 0.1,
+                        shadowRadius: 4
+                      }
+                    },
+                    children: [
+                      {
+                        id: uuidv4(),
+                        type: 'Text',
+                        props: {
+                          variant: 'body',
+                          text: '⚽',
+                          style: { fontSize: 32, marginBottom: 8 }
+                        }
+                      },
+                      {
+                        id: uuidv4(),
+                        type: 'Text',
+                        props: {
+                          variant: 'subtitle',
+                          text: 'Esportes',
+                          style: { 
+                            fontSize: 14, 
+                            fontWeight: '600', 
+                            color: '#171717',
+                            textAlign: 'center'
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  // Casino Quick Action
+                  {
+                    id: uuidv4(),
+                    type: 'Container',
+                    props: {
+                      variant: 'card',
+                      style: {
+                        flex: 1,
+                        backgroundColor: '#ffffff',
+                        borderRadius: 16,
+                        padding: 20,
+                        marginHorizontal: 4,
+                        alignItems: 'center',
+                        elevation: 2,
+                        shadowColor: '#000000',
+                        shadowOffset: { width: 0, height: 2 },
+                        shadowOpacity: 0.1,
+                        shadowRadius: 4
+                      }
+                    },
+                    children: [
+                      {
+                        id: uuidv4(),
+                        type: 'Text',
+                        props: {
+                          variant: 'body',
+                          text: '🎰',
+                          style: { fontSize: 32, marginBottom: 8 }
+                        }
+                      },
+                      {
+                        id: uuidv4(),
+                        type: 'Text',
+                        props: {
+                          variant: 'subtitle',
+                          text: 'Casino',
+                          style: { 
+                            fontSize: 14, 
+                            fontWeight: '600', 
+                            color: '#171717',
+                            textAlign: 'center'
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  // Lottery Quick Action
+                  {
+                    id: uuidv4(),
+                    type: 'Container',
+                    props: {
+                      variant: 'card',
+                      style: {
+                        flex: 1,
+                        backgroundColor: '#ffffff',
+                        borderRadius: 16,
+                        padding: 20,
+                        marginLeft: 8,
+                        alignItems: 'center',
+                        elevation: 2,
+                        shadowColor: '#000000',
+                        shadowOffset: { width: 0, height: 2 },
+                        shadowOpacity: 0.1,
+                        shadowRadius: 4
+                      }
+                    },
+                    children: [
+                      {
+                        id: uuidv4(),
+                        type: 'Text',
+                        props: {
+                          variant: 'body',
+                          text: '🎲',
+                          style: { fontSize: 32, marginBottom: 8 }
+                        }
+                      },
+                      {
+                        id: uuidv4(),
+                        type: 'Text',
+                        props: {
+                          variant: 'subtitle',
+                          text: 'Loterias',
+                          style: { 
+                            fontSize: 14, 
+                            fontWeight: '600', 
+                            color: '#171717',
+                            textAlign: 'center'
+                          }
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+
+          // Promotions Section
+          {
+            id: 'promotions-section',
+            type: 'carousel',
+            style: { paddingLeft: 16, marginTop: 20},
+            title: 'Promoções em Destaque',
+            components: [
+              {
+                id: uuidv4(),
+                type: 'Container',
+                props: {
+                  variant: 'card',
+                  style: {
+                    // width: 280,
+                    backgroundColor: '#ffffff',
+                    borderRadius: 16,
+                    padding: 20,
+                    marginRight: 16,
+                    elevation: 3,
+                    shadowColor: '#000000',
+                    shadowOffset: { width: 0, height: 3 },
+                    shadowOpacity: 0.1,
+                    shadowRadius: 6
+                  }
+                },
+                children: [
+                  {
+                    id: uuidv4(),
+                    type: 'Text',
+                    props: {
+                      variant: 'body',
+                      text: '🚀',
+                      style: { fontSize: 32, marginBottom: 12 }
+                    }
+                  },
+                  {
+                    id: uuidv4(),
+                    type: 'Text',
+                    props: {
+                      variant: 'title',
+                      text: 'Bônus de Boas-vindas',
+                      style: { 
+                        fontSize: 18, 
+                        fontWeight: '700', 
+                        color: '#171717',
+                        marginBottom: 8
+                      }
+                    }
+                  },
+                  {
+                    id: uuidv4(),
+                    type: 'Text',
+                    props: {
+                      variant: 'body',
+                      text: 'Ganhe 100% até R$ 500 no seu primeiro depósito',
+                      style: { 
+                        fontSize: 14, 
+                        color: '#737373',
+                        marginBottom: 16,
+                        lineHeight: 20
+                      }
+                    }
+                  },
+                  {
+                    id: uuidv4(),
+                    type: 'Button',
+                    props: {
+                      variant: 'primary',
+                      title: 'Participar',
+                      style: {
+                        backgroundColor: '#0ea5e9',
+                        borderRadius: 8,
+                        paddingVertical: 12
+                      },
+                      actions: [
+                        { type: 'navigate', payload: { screen: 'promotion-details' } }
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                id: uuidv4(),
+                type: 'Container',
+                props: {
+                  variant: 'card',
+                  style: {
+                    width: 280,
+                    backgroundColor: '#ffffff',
+                    borderRadius: 16,
+                    padding: 20,
+                    marginRight: 16,
+                    elevation: 3,
+                    shadowColor: '#000000',
+                    shadowOffset: { width: 0, height: 3 },
+                    shadowOpacity: 0.1,
+                    shadowRadius: 6
+                  }
+                },
+                children: [
+                  {
+                    id: uuidv4(),
+                    type: 'Text',
+                    props: {
+                      variant: 'body',
+                      text: '⚡',
+                      style: { fontSize: 32, marginBottom: 12 }
+                    }
+                  },
+                  {
+                    id: uuidv4(),
+                    type: 'Text',
+                    props: {
+                      variant: 'title',
+                      text: 'Odds Turbinadas',
+                      style: { 
+                        fontSize: 18, 
+                        fontWeight: '700', 
+                        color: '#171717',
+                        marginBottom: 8
+                      }
+                    }
+                  },
+                  {
+                    id: uuidv4(),
+                    type: 'Text',
+                    props: {
+                      variant: 'body',
+                      text: 'Odds aumentadas em jogos selecionados todos os dias',
+                      style: { 
+                        fontSize: 14, 
+                        color: '#737373',
+                        marginBottom: 16,
+                        lineHeight: 20
+                      }
+                    }
+                  },
+                  {
+                    id: uuidv4(),
+                    type: 'Button',
+                    props: {
+                      variant: 'secondary',
+                      title: 'Ver Jogos',
+                      style: {
+                        backgroundColor: '#f59e0b',
+                        borderRadius: 8,
+                        paddingVertical: 12
+                      },
+                      actions: [
+                        { type: 'navigate', payload: { screen: 'boosted-odds' } }
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+
+          // Live Matches Section
+          {
+            id: 'live-matches',
+            type: 'default',
+            style: { paddingHorizontal: 16, marginTop: 30 },
+            components: [
+              {
+                id: uuidv4(),
+                type: 'Container',
+                props: {
+                  variant: 'default',
+                  style: { 
+                    flexDirection: 'row', 
+                    justifyContent: 'space-between', 
+                    alignItems: 'center',
+                    marginBottom: 16
+                  }
+                },
+                children: [
+                  {
+                    id: uuidv4(),
+                    type: 'Text',
+                    props: {
+                      variant: 'title',
+                      text: '🔴 Ao Vivo',
+                      style: { 
+                        fontSize: 20, 
+                        fontWeight: '700', 
+                        color: '#171717'
+                      }
+                    }
+                  },
+                  {
+                    id: uuidv4(),
+                    type: 'Text',
+                    props: {
+                      variant: 'body',
+                      text: 'Ver todos ›',
+                      style: { 
+                        fontSize: 14, 
+                        color: '#0ea5e9',
+                        fontWeight: '600'
+                      }
+                    }
+                  }
+                ]
+              },
+              // Live Match Card
+              {
+                id: uuidv4(),
+                type: 'Container',
+                props: {
+                  variant: 'card',
+                  style: {
+                    backgroundColor: '#ffffff',
+                    borderRadius: 16,
+                    padding: 20,
+                    marginBottom: 12,
+                    elevation: 2,
+                    shadowColor: '#000000',
+                    shadowOffset: { width: 0, height: 2 },
+                    shadowOpacity: 0.08,
+                    shadowRadius: 4
+                  }
+                },
+                children: [
+                  {
+                    id: uuidv4(),
+                    type: 'Container',
+                    props: {
+                      variant: 'default',
+                      style: { 
+                        flexDirection: 'row', 
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        marginBottom: 16
+                      }
+                    },
+                    children: [
+                      {
+                        id: uuidv4(),
+                        type: 'Container',
+                        props: { variant: 'default', style: { flex: 1 } },
+                        children: [
+                          {
+                            id: uuidv4(),
+                            type: 'Text',
+                            props: {
+                              variant: 'subtitle',
+                              text: 'Flamengo vs Palmeiras',
+                              style: { 
+                                fontSize: 16, 
+                                fontWeight: '600', 
+                                color: '#171717',
+                                marginBottom: 4
+                              }
+                            }
+                          },
+                          {
+                            id: uuidv4(),
+                            type: 'Text',
+                            props: {
+                              variant: 'caption',
+                              text: 'Brasileirão • 75\' - 2º Tempo',
+                              style: { 
+                                fontSize: 12, 
+                                color: '#737373'
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        id: uuidv4(),
+                        type: 'Container',
+                        props: {
+                          variant: 'default',
+                          style: {
+                            backgroundColor: '#ef4444',
+                            paddingHorizontal: 8,
+                            paddingVertical: 4,
+                            borderRadius: 4
+                          }
+                        },
+                        children: [
+                          {
+                            id: uuidv4(),
+                            type: 'Text',
+                            props: {
+                              variant: 'caption',
+                              text: 'AO VIVO',
+                              style: { 
+                                fontSize: 10, 
+                                color: '#ffffff',
+                                fontWeight: '700'
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    id: uuidv4(),
+                    type: 'Text',
+                    props: {
+                      variant: 'title',
+                      text: '2 - 1',
+                      style: { 
+                        fontSize: 24, 
+                        fontWeight: '800', 
+                        color: '#0ea5e9',
+                        textAlign: 'center',
+                        marginBottom: 16
+                      }
+                    }
+                  },
+                  {
+                    id: uuidv4(),
+                    type: 'Container',
+                    props: {
+                      variant: 'default',
+                      style: { 
+                        flexDirection: 'row', 
+                        justifyContent: 'space-between'
+                      }
+                    },
+                    children: [
+                      {
+                        id: uuidv4(),
+                        type: 'Button',
+                        props: {
+                          variant: 'outline',
+                          title: '1 - 2.10',
+                          style: {
+                            flex: 1,
+                            marginRight: 4,
+                            backgroundColor: 'transparent',
+                            borderColor: '#e5e5e5',
+                            borderWidth: 1,
+                            borderRadius: 8
+                          },
+                          actions: [
+                            { type: 'module_action', payload: { module: 'betting', action: 'addToBetSlip' } }
+                          ]
+                        }
+                      },
+                      {
+                        id: uuidv4(),
+                        type: 'Button',
+                        props: {
+                          variant: 'outline',
+                          title: 'X - 3.40',
+                          style: {
+                            flex: 1,
+                            marginHorizontal: 4,
+                            backgroundColor: 'transparent',
+                            borderColor: '#e5e5e5',
+                            borderWidth: 1,
+                            borderRadius: 8
+                          },
+                          actions: [
+                            { type: 'module_action', payload: { module: 'betting', action: 'addToBetSlip' } }
+                          ]
+                        }
+                      },
+                      {
+                        id: uuidv4(),
+                        type: 'Button',
+                        props: {
+                          variant: 'outline',
+                          title: '2 - 4.20',
+                          style: {
+                            flex: 1,
+                            marginLeft: 4,
+                            backgroundColor: 'transparent',
+                            borderColor: '#e5e5e5',
+                            borderWidth: 1,
+                            borderRadius: 8
+                          },
+                          actions: [
+                            { type: 'module_action', payload: { module: 'betting', action: 'addToBetSlip' } }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+
+          // Popular Games Section
+          {
+            id: 'popular-games',
+            type: 'flex',
+            style: { paddingHorizontal: 16, marginTop: 30, paddingBottom: 30 },
+            components: [
+              {
+                id: uuidv4(),
+                type: 'Text',
+                props: {
+                  variant: 'title',
+                  text: 'Jogos Populares',
+                  style: { 
+                    fontSize: 20, 
+                    fontWeight: '700', 
+                    color: '#171717',
+                    marginBottom: 16
+                  }
+                }
+              },
+              {
+                id: uuidv4(),
+                type: 'Container',
+                props: {
+                  variant: 'default',
+                  style: { 
+                    flexDirection: 'row', 
+                    flexWrap: 'wrap',
+                    justifyContent: 'space-between'
+                  }
+                },
+                children: [
+                  // Aviator Game
+                  {
+                    id: uuidv4(),
+                    type: 'Container',
+                    props: {
+                      variant: 'card',
+                      style: {
+                        width: '48%',
+                        backgroundColor: '#ffffff',
+                        borderRadius: 16,
+                        padding: 16,
+                        marginBottom: 16,
+                        elevation: 2,
+                        shadowColor: '#000000',
+                        shadowOffset: { width: 0, height: 2 },
+                        shadowOpacity: 0.08,
+                        shadowRadius: 4
+                      }
+                    },
+                    children: [
+                      {
+                        id: uuidv4(),
+                        type: 'Text',
+                        props: {
+                          variant: 'body',
+                          text: '✈️',
+                          style: { fontSize: 32, textAlign: 'center', marginBottom: 8 }
+                        }
+                      },
+                      {
+                        id: uuidv4(),
+                        type: 'Text',
+                        props: {
+                          variant: 'subtitle',
+                          text: 'Aviator',
+                          style: { 
+                            fontSize: 14, 
+                            fontWeight: '600', 
+                            color: '#171717',
+                            textAlign: 'center',
+                            marginBottom: 4
+                          }
+                        }
+                      },
+                      {
+                        id: uuidv4(),
+                        type: 'Text',
+                        props: {
+                          variant: 'caption',
+                          text: '🔥 Em alta',
+                          style: { 
+                            fontSize: 12, 
+                            color: '#ef4444',
+                            textAlign: 'center'
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  // Fortune Tiger
+                  {
+                    id: uuidv4(),
+                    type: 'Container',
+                    props: {
+                      variant: 'card',
+                      style: {
+                        width: '48%',
+                        backgroundColor: '#ffffff',
+                        borderRadius: 16,
+                        padding: 16,
+                        marginBottom: 16,
+                        elevation: 2,
+                        shadowColor: '#000000',
+                        shadowOffset: { width: 0, height: 2 },
+                        shadowOpacity: 0.08,
+                        shadowRadius: 4
+                      }
+                    },
+                    children: [
+                      {
+                        id: uuidv4(),
+                        type: 'Text',
+                        props: {
+                          variant: 'body',
+                          text: '🐅',
+                          style: { fontSize: 32, textAlign: 'center', marginBottom: 8 }
+                        }
+                      },
+                      {
+                        id: uuidv4(),
+                        type: 'Text',
+                        props: {
+                          variant: 'subtitle',
+                          text: 'Fortune Tiger',
+                          style: { 
+                            fontSize: 14, 
+                            fontWeight: '600', 
+                            color: '#171717',
+                            textAlign: 'center',
+                            marginBottom: 4
+                          }
+                        }
+                      },
+                      {
+                        id: uuidv4(),
+                        type: 'Text',
+                        props: {
+                          variant: 'caption',
+                          text: '💰 Jackpot',
+                          style: { 
+                            fontSize: 12, 
+                            color: '#f59e0b',
+                            textAlign: 'center'
+                          }
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      metadata: {
+        name: 'Home Screen',
+        userId,
+        segment,
+        variant,
+        version: 1,
+        lastUpdated: new Date().toISOString()
+      }
+    };
+  }
+
+  getSportsScreenConfig(options = {}) {
+    const { userId, sport, showLive } = options;
+
+    return {
+      layout: {
+        type: 'scroll',
+        backgroundColor: '#fafafa',
+        sections: [
+          // Sports Header
+          {
+            id: 'sports-header',
+            type: 'hero',
+            style: { padding: 0 },
+            components: [
+              {
+                id: uuidv4(),
+                type: 'Container',
+                props: {
+                  variant: 'default',
+                  style: {
+                    background: 'linear-gradient(135deg, #16a34a, #15803d)',
+                    padding: 20,
+                    paddingTop: 60,
+                    paddingBottom: 30,
+                  }
+                },
+                children: [
+                  {
+                    id: uuidv4(),
+                    type: 'Text',
+                    props: {
+                      variant: 'title',
+                      text: '⚽ Esportes',
+                      style: { 
+                        fontSize: 28, 
+                        fontWeight: '800', 
+                        color: '#000', 
+                        textAlign: 'center',
+                        marginBottom: 8
+                      }
+                    }
+                  },
+                  {
+                    id: uuidv4(),
+                    type: 'Text',
+                    props: {
+                      variant: 'subtitle',
+                      text: 'As melhores odds do mercado',
+                      style: { 
+                        fontSize: 16, 
+                        color: 'rgba(0, 0, 0, 0.9)', 
+                        textAlign: 'center'
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+
+          // Quick Sports Categories
+          {
+            id: 'sports-categories',
+            type: 'carousel',
+            style: { paddingLeft: 16, marginTop: 20,flex:1},
+            components: [
+              {
+                id: uuidv4(),
+                type: 'Text',
+                props: {
+                  variant: 'title',
+                  text: 'Modalidades',
+                  style: { 
+                    fontSize: 20, 
+                    fontWeight: '700', 
+                    color: '#171717',
+                    marginBottom: 16,
+                    paddingHorizontal: 0
+                  }
+                }
+              },
+              {
+                id: uuidv4(),
+                type: 'Container',
+                props: {
+                  variant: 'card',
+                  style: {
+                    width: 120,
+                    backgroundColor: '#ffffff',
+                    borderRadius: 16,
+                    padding: 16,
+                    marginRight: 12,
+                    alignItems: 'center',
+                    elevation: 2,
+                    shadowColor: '#000000',
+                    shadowOffset: { width: 0, height: 2 },
+                    shadowOpacity: 0.08,
+                    shadowRadius: 4
+                  }
+                },
+                children: [
+                  {
+                    id: uuidv4(),
+                    type: 'Text',
+                    props: {
+                      variant: 'body',
+                      text: '⚽',
+                      style: { fontSize: 28, marginBottom: 8 }
+                    }
+                  },
+                  {
+                    id: uuidv4(),
+                    type: 'Text',
+                    props: {
+                      variant: 'caption',
+                      text: 'Futebol',
+                      style: { 
+                        fontSize: 12, 
+                        fontWeight: '600', 
+                        color: '#171717',
+                        textAlign: 'center'
+                      }
+                    }
+                  }
+                ]
+              },
+              {
+                id: uuidv4(),
+                type: 'Container',
+                props: {
+                  variant: 'card',
+                  style: {
+                    width: 120,
+                    backgroundColor: '#ffffff',
+                    borderRadius: 16,
+                    padding: 16,
+                    marginRight: 12,
+                    alignItems: 'center',
+                    elevation: 2,
+                    shadowColor: '#000000',
+                    shadowOffset: { width: 0, height: 2 },
+                    shadowOpacity: 0.08,
+                    shadowRadius: 4
+                  }
+                },
+                children: [
+                  {
+                    id: uuidv4(),
+                    type: 'Text',
+                    props: {
+                      variant: 'body',
+                      text: '🏀',
+                      style: { fontSize: 28, marginBottom: 8 }
+                    }
+                  },
+                  {
+                    id: uuidv4(),
+                    type: 'Text',
+                    props: {
+                      variant: 'caption',
+                      text: 'Basquete',
+                      style: { 
+                        fontSize: 12, 
+                        fontWeight: '600', 
+                        color: '#171717',
+                        textAlign: 'center'
+                      }
+                    }
+                  }
+                ]
+              },
+              {
+                id: uuidv4(),
+                type: 'Container',
+                props: {
+                  variant: 'card',
+                  style: {
+                    width: 120,
+                    backgroundColor: '#ffffff',
+                    borderRadius: 16,
+                    padding: 16,
+                    marginRight: 12,
+                    alignItems: 'center',
+                    elevation: 2,
+                    shadowColor: '#000000',
+                    shadowOffset: { width: 0, height: 2 },
+                    shadowOpacity: 0.08,
+                    shadowRadius: 4
+                  }
+                },
+                children: [
+                  {
+                    id: uuidv4(),
+                    type: 'Text',
+                    props: {
+                      variant: 'body',
+                      text: '🎾',
+                      style: { fontSize: 28, marginBottom: 8 }
+                    }
+                  },
+                  {
+                    id: uuidv4(),
+                    type: 'Text',
+                    props: {
+                      variant: 'caption',
+                      text: 'Tênis',
+                      style: { 
+                        fontSize: 12, 
+                        fontWeight: '600', 
+                        color: '#171717',
+                        textAlign: 'center'
+                      }
+                    }
+                  }
+                ]
+              },
+              {
+                id: uuidv4(),
+                type: 'Container',
+                props: {
+                  variant: 'card',
+                  style: {
+                    width: 120,
+                    backgroundColor: '#ffffff',
+                    borderRadius: 16,
+                    padding: 16,
+                    marginRight: 12,
+                    alignItems: 'center',
+                    elevation: 2,
+                    shadowColor: '#000000',
+                    shadowOffset: { width: 0, height: 2 },
+                    shadowOpacity: 0.08,
+                    shadowRadius: 4
+                  }
+                },
+                children: [
+                  {
+                    id: uuidv4(),
+                    type: 'Text',
+                    props: {
+                      variant: 'body',
+                      text: '🏈',
+                      style: { fontSize: 28, marginBottom: 8 }
+                    }
+                  },
+                  {
+                    id: uuidv4(),
+                    type: 'Text',
+                    props: {
+                      variant: 'caption',
+                      text: 'NFL',
+                      style: { 
+                        fontSize: 12, 
+                        fontWeight: '600', 
+                        color: '#171717',
+                        textAlign: 'center'
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+
+          // Live Matches Section
+          {
+            id: 'live-matches-section',
+            type: 'default',
+            style: { paddingHorizontal: 16, marginTop: 30 },
+            components: [
+              {
+                id: uuidv4(),
+                type: 'Container',
+                props: {
+                  variant: 'default',
+                  style: { 
+                    flexDirection: 'row', 
+                    justifyContent: 'space-between', 
+                    alignItems: 'center',
+                    marginBottom: 16
+                  }
+                },
+                children: [
+                  {
+                    id: uuidv4(),
+                    type: 'Text',
+                    props: {
+                      variant: 'title',
+                      text: '🔴 Jogos ao Vivo',
+                      style: { 
+                        fontSize: 20, 
+                        fontWeight: '700', 
+                        color: '#171717'
+                      }
+                    }
+                  },
+                  {
+                    id: uuidv4(),
+                    type: 'Container',
+                    props: {
+                      variant: 'default',
+                      style: {
+                        backgroundColor: '#ef4444',
+                        paddingHorizontal: 8,
+                        paddingVertical: 4,
+                        borderRadius: 12
+                      }
+                    },
+                    children: [
+                      {
+                        id: uuidv4(),
+                        type: 'Text',
+                        props: {
+                          variant: 'caption',
+                          text: '3 AO VIVO',
+                          style: { 
+                            fontSize: 10, 
+                            color: '#ffffff',
+                            fontWeight: '700'
+                          }
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              // Live Match 1
+              {
+                id: uuidv4(),
+                type: 'Container',
+                props: {
+                  variant: 'card',
+                  style: {
+                    backgroundColor: '#ffffff',
+                    borderRadius: 16,
+                    padding: 20,
+                    marginBottom: 16,
+                    elevation: 2,
+                    shadowColor: '#000000',
+                    shadowOffset: { width: 0, height: 2 },
+                    shadowOpacity: 0.08,
+                    shadowRadius: 4
+                  }
+                },
+                children: [
+                  {
+                    id: uuidv4(),
+                    type: 'Container',
+                    props: {
+                      variant: 'default',
+                      style: { 
+                        flexDirection: 'row', 
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        marginBottom: 12
+                      }
+                    },
+                    children: [
+                      {
+                        id: uuidv4(),
+                        type: 'Text',
+                        props: {
+                          variant: 'subtitle',
+                          text: 'Brasileirão Série A',
+                          style: { 
+                            fontSize: 12, 
+                            color: '#737373',
+                            fontWeight: '600'
+                          }
+                        }
+                      },
+                      {
+                        id: uuidv4(),
+                        type: 'Text',
+                        props: {
+                          variant: 'caption',
+                          text: '78\' - 2º Tempo',
+                          style: { 
+                            fontSize: 12, 
+                            color: '#ef4444',
+                            fontWeight: '700'
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    id: uuidv4(),
+                    type: 'Container',
+                    props: {
+                      variant: 'default',
+                      style: { 
+                        flexDirection: 'row', 
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        marginBottom: 16
+                      }
+                    },
+                    children: [
+                      {
+                        id: uuidv4(),
+                        type: 'Container',
+                        props: { variant: 'default', style: { alignItems: 'center' } },
+                        children: [
+                          {
+                            id: uuidv4(),
+                            type: 'Text',
+                            props: {
+                              variant: 'body',
+                              text: '🔴',
+                              style: { fontSize: 20, marginBottom: 4 }
+                            }
+                          },
+                          {
+                            id: uuidv4(),
+                            type: 'Text',
+                            props: {
+                              variant: 'subtitle',
+                              text: 'Flamengo',
+                              style: { 
+                                fontSize: 14, 
+                                fontWeight: '600', 
+                                color: '#171717'
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        id: uuidv4(),
+                        type: 'Text',
+                        props: {
+                          variant: 'title',
+                          text: '2 - 1',
+                          style: { 
+                            fontSize: 24, 
+                            fontWeight: '800', 
+                            color: '#16a34a'
+                          }
+                        }
+                      },
+                      {
+                        id: uuidv4(),
+                        type: 'Container',
+                        props: { variant: 'default', style: { alignItems: 'center' } },
+                        children: [
+                          {
+                            id: uuidv4(),
+                            type: 'Text',
+                            props: {
+                              variant: 'body',
+                              text: '🟢',
+                              style: { fontSize: 20, marginBottom: 4 }
+                            }
+                          },
+                          {
+                            id: uuidv4(),
+                            type: 'Text',
+                            props: {
+                              variant: 'subtitle',
+                              text: 'Palmeiras',
+                              style: { 
+                                fontSize: 14, 
+                                fontWeight: '600', 
+                                color: '#171717'
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    id: uuidv4(),
+                    type: 'Container',
+                    props: {
+                      variant: 'default',
+                      style: { 
+                        flexDirection: 'row', 
+                        justifyContent: 'space-between'
+                      }
+                    },
+                    children: [
+                      {
+                        id: uuidv4(),
+                        type: 'Button',
+                        props: {
+                          variant: 'outline',
+                          title: '1\n2.10',
+                          style: {
+                            flex: 1,
+                            marginRight: 4,
+                            backgroundColor: 'transparent',
+                            borderColor: '#e5e5e5',
+                            borderWidth: 1,
+                            borderRadius: 8,
+                            paddingVertical: 12
+                          },
+                          actions: [
+                            { type: 'module_action', payload: { module: 'betting', action: 'addToBetSlip' } }
+                          ]
+                        }
+                      },
+                      {
+                        id: uuidv4(),
+                        type: 'Button',
+                        props: {
+                          variant: 'outline',
+                          title: 'X\n3.40',
+                          style: {
+                            flex: 1,
+                            marginHorizontal: 4,
+                            backgroundColor: 'transparent',
+                            borderColor: '#e5e5e5',
+                            borderWidth: 1,
+                            borderRadius: 8,
+                            paddingVertical: 12
+                          },
+                          actions: [
+                            { type: 'module_action', payload: { module: 'betting', action: 'addToBetSlip' } }
+                          ]
+                        }
+                      },
+                      {
+                        id: uuidv4(),
+                        type: 'Button',
+                        props: {
+                          variant: 'outline',
+                          title: '2\n4.20',
+                          style: {
+                            flex: 1,
+                            marginLeft: 4,
+                            backgroundColor: 'transparent',
+                            borderColor: '#e5e5e5',
+                            borderWidth: 1,
+                            borderRadius: 8,
+                            paddingVertical: 12
+                          },
+                          actions: [
+                            { type: 'module_action', payload: { module: 'betting', action: 'addToBetSlip' } }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+
+          // Featured Matches
+          {
+            id: 'featured-matches',
+            type: 'default',
+            style: { paddingHorizontal: 16, marginTop: 20 },
+            components: [
+              {
+                id: uuidv4(),
+                type: 'Text',
+                props: {
+                  variant: 'title',
+                  text: '⭐ Jogos em Destaque',
+                  style: { 
+                    fontSize: 20, 
+                    fontWeight: '700', 
+                    color: '#171717',
+                    marginBottom: 16
+                  }
+                }
+              },
+              // Featured Match 1
+              {
+                id: uuidv4(),
+                type: 'Container',
+                props: {
+                  variant: 'card',
+                  style: {
+                    backgroundColor: '#ffffff',
+                    borderRadius: 16,
+                    padding: 20,
+                    marginBottom: 16,
+                    elevation: 2,
+                    shadowColor: '#000000',
+                    shadowOffset: { width: 0, height: 2 },
+                    shadowOpacity: 0.08,
+                    shadowRadius: 4
+                  }
+                },
+                children: [
+                  {
+                    id: uuidv4(),
+                    type: 'Container',
+                    props: {
+                      variant: 'default',
+                      style: { 
+                        flexDirection: 'row', 
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        marginBottom: 12
+                      }
+                    },
+                    children: [
+                      {
+                        id: uuidv4(),
+                        type: 'Text',
+                        props: {
+                          variant: 'subtitle',
+                          text: 'Liga dos Campeões',
+                          style: { 
+                            fontSize: 12, 
+                            color: '#737373',
+                            fontWeight: '600'
+                          }
+                        }
+                      },
+                      {
+                        id: uuidv4(),
+                        type: 'Text',
+                        props: {
+                          variant: 'caption',
+                          text: 'Hoje 21:00',
+                          style: { 
+                            fontSize: 12, 
+                            color: '#0ea5e9',
+                            fontWeight: '700'
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    id: uuidv4(),
+                    type: 'Container',
+                    props: {
+                      variant: 'default',
+                      style: { 
+                        flexDirection: 'row', 
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        marginBottom: 16
+                      }
+                    },
+                    children: [
+                      {
+                        id: uuidv4(),
+                        type: 'Container',
+                        props: { variant: 'default', style: { alignItems: 'center' } },
+                        children: [
+                          {
+                            id: uuidv4(),
+                            type: 'Text',
+                            props: {
+                              variant: 'body',
+                              text: '🏆',
+                              style: { fontSize: 20, marginBottom: 4 }
+                            }
+                          },
+                          {
+                            id: uuidv4(),
+                            type: 'Text',
+                            props: {
+                              variant: 'subtitle',
+                              text: 'Real Madrid',
+                              style: { 
+                                fontSize: 14, 
+                                fontWeight: '600', 
+                                color: '#171717'
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        id: uuidv4(),
+                        type: 'Text',
+                        props: {
+                          variant: 'title',
+                          text: 'vs',
+                          style: { 
+                            fontSize: 16, 
+                            fontWeight: '600', 
+                            color: '#737373'
+                          }
+                        }
+                      },
+                      {
+                        id: uuidv4(),
+                        type: 'Container',
+                        props: { variant: 'default', style: { alignItems: 'center' } },
+                        children: [
+                          {
+                            id: uuidv4(),
+                            type: 'Text',
+                            props: {
+                              variant: 'body',
+                              text: '🔴',
+                              style: { fontSize: 20, marginBottom: 4 }
+                            }
+                          },
+                          {
+                            id: uuidv4(),
+                            type: 'Text',
+                            props: {
+                              variant: 'subtitle',
+                              text: 'Liverpool',
+                              style: { 
+                                fontSize: 14, 
+                                fontWeight: '600', 
+                                color: '#171717'
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    id: uuidv4(),
+                    type: 'Container',
+                    props: {
+                      variant: 'default',
+                      style: { 
+                        flexDirection: 'row', 
+                        justifyContent: 'space-between'
+                      }
+                    },
+                    children: [
+                      {
+                        id: uuidv4(),
+                        type: 'Button',
+                        props: {
+                          variant: 'outline',
+                          title: '1\n1.85',
+                          style: {
+                            flex: 1,
+                            marginRight: 4,
+                            backgroundColor: 'transparent',
+                            borderColor: '#e5e5e5',
+                            borderWidth: 1,
+                            borderRadius: 8,
+                            paddingVertical: 12
+                          },
+                          actions: [
+                            { type: 'module_action', payload: { module: 'betting', action: 'addToBetSlip' } }
+                          ]
+                        }
+                      },
+                      {
+                        id: uuidv4(),
+                        type: 'Button',
+                        props: {
+                          variant: 'outline',
+                          title: 'X\n3.20',
+                          style: {
+                            flex: 1,
+                            marginHorizontal: 4,
+                            backgroundColor: 'transparent',
+                            borderColor: '#e5e5e5',
+                            borderWidth: 1,
+                            borderRadius: 8,
+                            paddingVertical: 12
+                          },
+                          actions: [
+                            { type: 'module_action', payload: { module: 'betting', action: 'addToBetSlip' } }
+                          ]
+                        }
+                      },
+                      {
+                        id: uuidv4(),
+                        type: 'Button',
+                        props: {
+                          variant: 'outline',
+                          title: '2\n4.50',
+                          style: {
+                            flex: 1,
+                            marginLeft: 4,
+                            backgroundColor: 'transparent',
+                            borderColor: '#e5e5e5',
+                            borderWidth: 1,
+                            borderRadius: 8,
+                            paddingVertical: 12
+                          },
+                          actions: [
+                            { type: 'module_action', payload: { module: 'betting', action: 'addToBetSlip' } }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+
+          // Popular Bets Section
+          {
+            id: 'popular-bets',
+            type: 'flex',
+            style: { paddingHorizontal: 16, marginTop: 20, paddingBottom: 30 },
+            components: [
+              {
+                id: uuidv4(),
+                type: 'Text',
+                props: {
+                  variant: 'title',
+                  text: '🔥 Apostas Populares',
+                  style: { 
+                    fontSize: 20, 
+                    fontWeight: '700', 
+                    color: '#171717',
+                    marginBottom: 16
+                  }
+                }
+              },
+              {
+                id: uuidv4(),
+                type: 'Container',
+                props: {
+                  variant: 'default',
+                  style: { 
+                    flexDirection: 'row', 
+                    flexWrap: 'wrap',
+                    justifyContent: 'space-between'
+                  }
+                },
+                children: [
+                  // Over 2.5 Gols
+                  {
+                    id: uuidv4(),
+                    type: 'Container',
+                    props: {
+                      variant: 'card',
+                      style: {
+                        width: '48%',
+                        backgroundColor: '#ffffff',
+                        borderRadius: 16,
+                        padding: 16,
+                        marginBottom: 16,
+                        elevation: 2,
+                        shadowColor: '#000000',
+                        shadowOffset: { width: 0, height: 2 },
+                        shadowOpacity: 0.08,
+                        shadowRadius: 4
+                      }
+                    },
+                    children: [
+                      {
+                        id: uuidv4(),
+                        type: 'Text',
+                        props: {
+                          variant: 'subtitle',
+                          text: 'Over 2.5 Gols',
+                          style: { 
+                            fontSize: 14, 
+                            fontWeight: '600', 
+                            color: '#171717',
+                            textAlign: 'center',
+                            marginBottom: 8
+                          }
+                        }
+                      },
+                      {
+                        id: uuidv4(),
+                        type: 'Text',
+                        props: {
+                          variant: 'title',
+                          text: '1.90',
+                          style: { 
+                            fontSize: 24, 
+                            fontWeight: '800', 
+                            color: '#16a34a',
+                            textAlign: 'center',
+                            marginBottom: 8
+                          }
+                        }
+                      },
+                      {
+                        id: uuidv4(),
+                        type: 'Text',
+                        props: {
+                          variant: 'caption',
+                          text: '🔥 Mais apostado',
+                          style: { 
+                            fontSize: 12, 
+                            color: '#ef4444',
+                            textAlign: 'center'
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  // Ambos Marcam
+                  {
+                    id: uuidv4(),
+                    type: 'Container',
+                    props: {
+                      variant: 'card',
+                      style: {
+                        width: '48%',
+                        backgroundColor: '#ffffff',
+                        borderRadius: 16,
+                        padding: 16,
+                        marginBottom: 16,
+                        elevation: 2,
+                        shadowColor: '#000000',
+                        shadowOffset: { width: 0, height: 2 },
+                        shadowOpacity: 0.08,
+                        shadowRadius: 4
+                      }
+                    },
+                    children: [
+                      {
+                        id: uuidv4(),
+                        type: 'Text',
+                        props: {
+                          variant: 'subtitle',
+                          text: 'Ambos Marcam',
+                          style: { 
+                            fontSize: 14, 
+                            fontWeight: '600', 
+                            color: '#171717',
+                            textAlign: 'center',
+                            marginBottom: 8
+                          }
+                        }
+                      },
+                      {
+                        id: uuidv4(),
+                        type: 'Text',
+                        props: {
+                          variant: 'title',
+                          text: '2.25',
+                          style: { 
+                            fontSize: 24, 
+                            fontWeight: '800', 
+                            color: '#f59e0b',
+                            textAlign: 'center',
+                            marginBottom: 8
+                          }
+                        }
+                      },
+                      {
+                        id: uuidv4(),
+                        type: 'Text',
+                        props: {
+                          variant: 'caption',
+                          text: '⚡ Odd alta',
+                          style: { 
+                            fontSize: 12, 
+                            color: '#f59e0b',
+                            textAlign: 'center'
+                          }
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      metadata: {
+        name: 'Sports Screen',
+        userId,
+        sport,
+        showLive,
+        version: 1,
+        lastUpdated: new Date().toISOString()
+      }
+    };
+  }
+
+  getCasinoScreenConfig(options = {}) {
+    const { userId, category, gameType } = options;
+
+    return {
+      layout: {
+        type: 'scroll',
+        backgroundColor: '#fafafa',
+        sections: [
+          // Casino Header
+          {
+            id: 'casino-header',
+            type: 'hero',
+            style: { padding: 0 },
+            components: [
+              {
+                id: uuidv4(),
+                type: 'Container',
+                props: {
+                  variant: 'default',
+                  style: {
+                    background: 'linear-gradient(135deg, #7c3aed, #c026d3)',
+                    padding: 20,
+                    paddingTop: 60,
+                    paddingBottom: 30
+                  }
+                },
+                children: [
+                  {
+                    id: uuidv4(),
+                    type: 'Text',
+                    props: {
+                      variant: 'title',
+                      text: '🎰 Casino',
+                      style: { 
+                        fontSize: 28, 
+                        fontWeight: '800', 
+                        color: '#000', 
+                        textAlign: 'center',
+                        marginBottom: 8
+                      }
+                    }
+                  },
+                  {
+                    id: uuidv4(),
+                    type: 'Text',
+                    props: {
+                      variant: 'subtitle',
+                      text: 'Jogos emocionantes e grandes prêmios',
+                      style: { 
+                        fontSize: 16, 
+                        color: 'rgba(0, 0, 0, 0.9)', 
+                        textAlign: 'center'
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+
+          // Jackpot Banner
+          {
+            id: 'jackpot-banner',
+            type: 'banner',
+            style: { paddingHorizontal: 16, marginTop: 20 },
+            components: [
+              {
+                id: uuidv4(),
+                type: 'Container',
+                props: {
+                  variant: 'card',
+                  style: {
+                    background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+                    borderRadius: 20,
+                    padding: 24,
+                    alignItems: 'center',
+                    marginBottom: 20,
+                    elevation: 4,
+                    shadowColor: '#fff',
+                    shadowOffset: { width: 0, height: 4 },
+                    shadowOpacity: 0.2,
+                    shadowRadius: 8
+                  }
+                },
+                children: [
+                  {
+                    id: uuidv4(),
+                    type: 'Text',
+                    props: {
+                      variant: 'body',
+                      text: '💰',
+                      style: { fontSize: 40, marginBottom: 8 }
+                    }
+                  },
+                  {
+                    id: uuidv4(),
+                    type: 'Text',
+                    props: {
+                      variant: 'title',
+                      text: 'MEGA JACKPOT',
+                      style: { 
+                        fontSize: 20, 
+                        fontWeight: '800', 
+                        color: '#000',
+                        textAlign: 'center',
+                        marginBottom: 8
+                      }
+                    }
+                  },
+                  {
+                    id: uuidv4(),
+                    type: 'Text',
+                    props: {
+                      variant: 'title',
+                      text: 'R$ 2.547.891',
+                      style: { 
+                        fontSize: 28, 
+                        fontWeight: '900', 
+                        color: '#000',
+                        textAlign: 'center',
+                        // marginBottom: 12
+                      }
+                    }
+                  },
+                  {
+                    id: uuidv4(),
+                    type: 'Button',
+                    props: {
+                      variant: 'primary',
+                      title: 'JOGAR AGORA',
+                      style: {
+                        backgroundColor: '#000',
+                        color: '#d97706',
+                        borderRadius: 25,
+                        // paddingVertical: 12,r
+                        paddingHorizontal: 32
+                      },
+                      actions: [
+                        { type: 'navigate', payload: { screen: 'jackpot-games' } }
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+
+          // Game Categories
+          {
+            id: 'game-categories',
+            type: 'flex',
+            style: { paddingHorizontal: 16, marginTop: 10 },
+            components: [
+              {
+                id: uuidv4(),
+                type: 'Text',
+                props: {
+                  variant: 'title',
+                  text: 'Categorias',
+                  style: { 
+                    fontSize: 20, 
+                    fontWeight: '700', 
+                    color: '#171717',
+                    marginBottom: 16
+                  }
+                }
+              },
+              {
+                id: uuidv4(),
+                type: 'Container',
+                props: {
+                  variant: 'default',
+                  style: { 
+                    flexDirection: 'row', 
+                    flexWrap: 'wrap',
+                    justifyContent: 'space-between'
+                  }
+                },
+                children: [
+                  // Slots
+                  {
+                    id: uuidv4(),
+                    type: 'Container',
+                    props: {
+                      variant: 'card',
+                      style: {
+                        width: '48%',
+                        backgroundColor: '#ffffff',
+                        borderRadius: 16,
+                        padding: 20,
+                        marginBottom: 16,
+                        alignItems: 'center',
+                        elevation: 2,
+                        shadowColor: '#000000',
+                        shadowOffset: { width: 0, height: 2 },
+                        shadowOpacity: 0.08,
+                        shadowRadius: 4
+                      }
+                    },
+                    children: [
+                      {
+                        id: uuidv4(),
+                        type: 'Text',
+                        props: {
+                          variant: 'body',
+                          text: '🎰',
+                          style: { fontSize: 32, marginBottom: 8 }
+                        }
+                      },
+                      {
+                        id: uuidv4(),
+                        type: 'Text',
+                        props: {
+                          variant: 'subtitle',
+                          text: 'Slots',
+                          style: { 
+                            fontSize: 16, 
+                            fontWeight: '600', 
+                            color: '#171717',
+                            textAlign: 'center',
+                            marginBottom: 4
+                          }
+                        }
+                      },
+                      {
+                        id: uuidv4(),
+                        type: 'Text',
+                        props: {
+                          variant: 'caption',
+                          text: '500+ jogos',
+                          style: { 
+                            fontSize: 12, 
+                            color: '#737373',
+                            textAlign: 'center'
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  // Live Casino
+                  {
+                    id: uuidv4(),
+                    type: 'Container',
+                    props: {
+                      variant: 'card',
+                      style: {
+                        width: '48%',
+                        backgroundColor: '#ffffff',
+                        borderRadius: 16,
+                        padding: 20,
+                        marginBottom: 16,
+                        alignItems: 'center',
+                        elevation: 2,
+                        shadowColor: '#000000',
+                        shadowOffset: { width: 0, height: 2 },
+                        shadowOpacity: 0.08,
+                        shadowRadius: 4
+                      }
+                    },
+                    children: [
+                      {
+                        id: uuidv4(),
+                        type: 'Text',
+                        props: {
+                          variant: 'body',
+                          text: '🎭',
+                          style: { fontSize: 32, marginBottom: 8 }
+                        }
+                      },
+                      {
+                        id: uuidv4(),
+                        type: 'Text',
+                        props: {
+                          variant: 'subtitle',
+                          text: 'Live Casino',
+                          style: { 
+                            fontSize: 16, 
+                            fontWeight: '600', 
+                            color: '#171717',
+                            textAlign: 'center',
+                            marginBottom: 4
+                          }
+                        }
+                      },
+                      {
+                        id: uuidv4(),
+                        type: 'Text',
+                        props: {
+                          variant: 'caption',
+                          text: 'Dealers reais',
+                          style: { 
+                            fontSize: 12, 
+                            color: '#737373',
+                            textAlign: 'center'
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  // Table Games
+                  {
+                    id: uuidv4(),
+                    type: 'Container',
+                    props: {
+                      variant: 'card',
+                      style: {
+                        width: '48%',
+                        backgroundColor: '#ffffff',
+                        borderRadius: 16,
+                        padding: 20,
+                        marginBottom: 16,
+                        alignItems: 'center',
+                        elevation: 2,
+                        shadowColor: '#000000',
+                        shadowOffset: { width: 0, height: 2 },
+                        shadowOpacity: 0.08,
+                        shadowRadius: 4
+                      }
+                    },
+                    children: [
+                      {
+                        id: uuidv4(),
+                        type: 'Text',
+                        props: {
+                          variant: 'body',
+                          text: '🃏',
+                          style: { fontSize: 32, marginBottom: 8 }
+                        }
+                      },
+                      {
+                        id: uuidv4(),
+                        type: 'Text',
+                        props: {
+                          variant: 'subtitle',
+                          text: 'Mesa',
+                          style: { 
+                            fontSize: 16, 
+                            fontWeight: '600', 
+                            color: '#171717',
+                            textAlign: 'center',
+                            marginBottom: 4
+                          }
+                        }
+                      },
+                      {
+                        id: uuidv4(),
+                        type: 'Text',
+                        props: {
+                          variant: 'caption',
+                          text: 'Blackjack, Poker',
+                          style: { 
+                            fontSize: 12, 
+                            color: '#737373',
+                            textAlign: 'center'
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  // Crash Games
+                  {
+                    id: uuidv4(),
+                    type: 'Container',
+                    props: {
+                      variant: 'card',
+                      style: {
+                        width: '48%',
+                        backgroundColor: '#ffffff',
+                        borderRadius: 16,
+                        padding: 20,
+                        marginBottom: 16,
+                        alignItems: 'center',
+                        elevation: 2,
+                        shadowColor: '#000000',
+                        shadowOffset: { width: 0, height: 2 },
+                        shadowOpacity: 0.08,
+                        shadowRadius: 4
+                      }
+                    },
+                    children: [
+                      {
+                        id: uuidv4(),
+                        type: 'Text',
+                        props: {
+                          variant: 'body',
+                          text: '🚀',
+                          style: { fontSize: 32, marginBottom: 8 }
+                        }
+                      },
+                      {
+                        id: uuidv4(),
+                        type: 'Text',
+                        props: {
+                          variant: 'subtitle',
+                          text: 'Crash',
+                          style: { 
+                            fontSize: 16, 
+                            fontWeight: '600', 
+                            color: '#171717',
+                            textAlign: 'center',
+                            marginBottom: 4
+                          }
+                        }
+                      },
+                      {
+                        id: uuidv4(),
+                        type: 'Text',
+                        props: {
+                          variant: 'caption',
+                          text: 'Aviator, Spaceman',
+                          style: { 
+                            fontSize: 12, 
+                            color: '#737373',
+                            textAlign: 'center'
+                          }
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+
+          // Featured Games
+          {
+            id: 'featured-games',
+            type: 'carousel',
+            style: { paddingLeft: 16, marginTop: 20 },
+            title: 'Jogos em Destaque',
+            components: [
+              // Fortune Tiger
+              {
+                id: uuidv4(),
+                type: 'Container',
+                props: {
+                  variant: 'card',
+                  style: {
+                    width: 200,
+                    backgroundColor: '#ffffff',
+                    borderRadius: 16,
+                    padding: 16,
+                    marginRight: 16,
+                    elevation: 3,
+                    shadowColor: '#000000',
+                    shadowOffset: { width: 0, height: 3 },
+                    shadowOpacity: 0.1,
+                    shadowRadius: 6
+                  }
+                },
+                children: [
+                  {
+                    id: uuidv4(),
+                    type: 'Text',
+                    props: {
+                      variant: 'body',
+                      text: '🐅',
+                      style: { fontSize: 48, textAlign: 'center', marginBottom: 12 }
+                    }
+                  },
+                  {
+                    id: uuidv4(),
+                    type: 'Text',
+                    props: {
+                      variant: 'title',
+                      text: 'Fortune Tiger',
+                      style: { 
+                        fontSize: 16, 
+                        fontWeight: '700', 
+                        color: '#171717',
+                        textAlign: 'center',
+                        marginBottom: 8
+                      }
+                    }
+                  },
+                  {
+                    id: uuidv4(),
+                    type: 'Text',
+                    props: {
+                      variant: 'caption',
+                      text: '🔥 Popular',
+                      style: { 
+                        fontSize: 12, 
+                        color: '#ef4444',
+                        textAlign: 'center',
+                        marginBottom: 12
+                      }
+                    }
+                  },
+                  {
+                    id: uuidv4(),
+                    type: 'Button',
+                    props: {
+                      variant: 'primary',
+                      title: 'Jogar',
+                      style: {
+                        backgroundColor: '#7c3aed',
+                        borderRadius: 8,
+                        paddingVertical: 8
+                      },
+                      actions: [
+                        { type: 'navigate', payload: { screen: 'fortune-tiger' } }
+                      ]
+                    }
+                  }
+                ]
+              },
+              // Aviator
+              {
+                id: uuidv4(),
+                type: 'Container',
+                props: {
+                  variant: 'card',
+                  style: {
+                    width: 200,
+                    backgroundColor: '#ffffff',
+                    borderRadius: 16,
+                    padding: 16,
+                    marginRight: 16,
+                    elevation: 3,
+                    shadowColor: '#000000',
+                    shadowOffset: { width: 0, height: 3 },
+                    shadowOpacity: 0.1,
+                    shadowRadius: 6
+                  }
+                },
+                children: [
+                  {
+                    id: uuidv4(),
+                    type: 'Text',
+                    props: {
+                      variant: 'body',
+                      text: '✈️',
+                      style: { fontSize: 48, textAlign: 'center', marginBottom: 12 }
+                    }
+                  },
+                  {
+                    id: uuidv4(),
+                    type: 'Text',
+                    props: {
+                      variant: 'title',
+                      text: 'Aviator',
+                      style: { 
+                        fontSize: 16, 
+                        fontWeight: '700', 
+                        color: '#171717',
+                        textAlign: 'center',
+                        marginBottom: 8
+                      }
+                    }
+                  },
+                  {
+                    id: uuidv4(),
+                    type: 'Text',
+                    props: {
+                      variant: 'caption',
+                      text: '⚡ Crash Game',
+                      style: { 
+                        fontSize: 12, 
+                        color: '#f59e0b',
+                        textAlign: 'center',
+                        marginBottom: 12
+                      }
+                    }
+                  },
+                  {
+                    id: uuidv4(),
+                    type: 'Button',
+                    props: {
+                      variant: 'primary',
+                      title: 'Jogar',
+                      style: {
+                        backgroundColor: '#7c3aed',
+                        borderRadius: 8,
+                        paddingVertical: 8
+                      },
+                      actions: [
+                        { type: 'navigate', payload: { screen: 'aviator' } }
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      metadata: {
+        name: 'Casino Screen',
+        userId,
+        category,
+        gameType,
+        version: 1,
+        lastUpdated: new Date().toISOString()
+      }
+    };
+  }
+
+  getLotteryScreenConfig(options = {}) {
+    const { userId, region } = options;
+    
+    return {
+      layout: {
+        type: 'scroll',
+        backgroundColor: '#fafafa',
+        sections: [
+          // Lottery Header
+          {
+            id: 'lottery-header',
+            type: 'hero',
+            style: { padding: 0 },
+            components: [
+              {
+                id: uuidv4(),
+                type: 'Container',
+                props: {
+                  variant: 'default',
+                  style: {
+                    background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+                    padding: 20,
+                    paddingTop: 60,
+                    paddingBottom: 30
+                  }
+                },
+                children: [
+                  {
+                    id: uuidv4(),
+                    type: 'Text',
+                    props: {
+                      variant: 'title',
+                      text: '🎲 Loterias',
+                      style: { 
+                        fontSize: 28, 
+                        fontWeight: '800', 
+                        color: '#ffffff', 
+                        textAlign: 'center',
+                        marginBottom: 8
+                      }
+                    }
+                  },
+                  {
+                    id: uuidv4(),
+                    type: 'Text',
+                    props: {
+                      variant: 'subtitle',
+                      text: 'Sonhe grande, aposte nos maiores prêmios',
+                      style: { 
+                        fontSize: 16, 
+                        color: 'rgba(255, 255, 255, 0.9)', 
+                        textAlign: 'center'
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+
+          // Next Draw Banner
+          {
+            id: 'next-draw-banner',
+            type: 'banner',
+            style: { paddingHorizontal: 16, marginTop: 20 },
+            components: [
+              {
+                id: uuidv4(),
+                type: 'Container',
+                props: {
+                  variant: 'card',
+                  style: {
+                    backgroundColor: '#ffffff',
+                    borderRadius: 20,
+                    padding: 24,
+                    alignItems: 'center',
+                    marginBottom: 20,
+                    elevation: 4,
+                    shadowColor: '#000000',
+                    shadowOffset: { width: 0, height: 4 },
+                    shadowOpacity: 0.1,
+                    shadowRadius: 8,
+                    borderLeftWidth: 4,
+                    borderLeftColor: '#f59e0b'
+                  }
+                },
+                children: [
+                  {
+                    id: uuidv4(),
+                    type: 'Text',
+                    props: {
+                      variant: 'subtitle',
+                      text: 'Próximo Sorteio - Mega-Sena',
+                      style: { 
+                        fontSize: 16, 
+                        fontWeight: '600', 
+                        color: '#737373',
+                        textAlign: 'center',
+                        marginBottom: 8
+                      }
+                    }
+                  },
+                  {
+                    id: uuidv4(),
+                    type: 'Text',
+                    props: {
+                      variant: 'title',
+                      text: 'R$ 45.000.000',
+                      style: { 
+                        fontSize: 32, 
+                        fontWeight: '900', 
+                        color: '#f59e0b',
+                        textAlign: 'center',
+                        marginBottom: 8
+                      }
+                    }
+                  },
+                  {
+                    id: uuidv4(),
+                    type: 'Text',
+                    props: {
+                      variant: 'caption',
+                      text: 'Sábado, 25 de Junho - 20:00h',
+                      style: { 
+                        fontSize: 14, 
+                        color: '#171717',
+                        textAlign: 'center',
+                        marginBottom: 16
+                      }
+                    }
+                  },
+                  {
+                    id: uuidv4(),
+                    type: 'Button',
+                    props: {
+                      variant: 'primary',
+                      title: 'APOSTAR AGORA',
+                      style: {
+                        backgroundColor: '#f59e0b',
+                        borderRadius: 25,
+                        paddingVertical: 12,
+                        paddingHorizontal: 32
+                      },
+                      actions: [
+                        { type: 'navigate', payload: { screen: 'mega-sena-bet' } }
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+
+          // Lottery Games
+          {
+            id: 'lottery-games',
+            type: 'default',
+            style: { paddingHorizontal: 16, marginTop: 10 },
+            components: [
+              {
+                id: uuidv4(),
+                type: 'Text',
+                props: {
+                  variant: 'title',
+                  text: 'Modalidades Disponíveis',
+                  style: { 
+                    fontSize: 20, 
+                    fontWeight: '700', 
+                    color: '#171717',
+                    marginBottom: 16
+                  }
+                }
+              },
+              // Mega-Sena
+              {
+                id: uuidv4(),
+                type: 'Container',
+                props: {
+                  variant: 'card',
+                  style: {
+                    backgroundColor: '#ffffff',
+                    borderRadius: 16,
+                    padding: 20,
+                    marginBottom: 16,
+                    elevation: 2,
+                    shadowColor: '#000000',
+                    shadowOffset: { width: 0, height: 2 },
+                    shadowOpacity: 0.08,
+                    shadowRadius: 4
+                  }
+                },
+                children: [
+                  {
+                    id: uuidv4(),
+                    type: 'Container',
+                    props: {
+                      variant: 'default',
+                      style: { 
+                        flexDirection: 'row', 
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        marginBottom: 12
+                      }
+                    },
+                    children: [
+                      {
+                        id: uuidv4(),
+                        type: 'Container',
+                        props: { variant: 'default', style: { flex: 1 } },
+                        children: [
+                          {
+                            id: uuidv4(),
+                            type: 'Text',
+                            props: {
+                              variant: 'title',
+                              text: '🍀 Mega-Sena',
+                              style: { 
+                                fontSize: 18, 
+                                fontWeight: '700', 
+                                color: '#171717',
+                                marginBottom: 4
+                              }
+                            }
+                          },
+                          {
+                            id: uuidv4(),
+                            type: 'Text',
+                            props: {
+                              variant: 'body',
+                              text: 'Escolha 6 números de 1 a 60',
+                              style: { 
+                                fontSize: 14, 
+                                color: '#737373',
+                                marginBottom: 8
+                              }
+                            }
+                          },
+                          {
+                            id: uuidv4(),
+                            type: 'Text',
+                            props: {
+                              variant: 'subtitle',
+                              text: 'Prêmio: R$ 45.000.000',
+                              style: { 
+                                fontSize: 16, 
+                                fontWeight: '600', 
+                                color: '#f59e0b'
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        id: uuidv4(),
+                        type: 'Button',
+                        props: {
+                          variant: 'primary',
+                          title: 'Apostar',
+                          style: {
+                            backgroundColor: '#f59e0b',
+                            borderRadius: 8,
+                            paddingVertical: 8,
+                            paddingHorizontal: 16
+                          },
+                          actions: [
+                            { type: 'navigate', payload: { screen: 'mega-sena-bet' } }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              // Quina
+              {
+                id: uuidv4(),
+                type: 'Container',
+                props: {
+                  variant: 'card',
+                  style: {
+                    backgroundColor: '#ffffff',
+                    borderRadius: 16,
+                    padding: 20,
+                    marginBottom: 16,
+                    elevation: 2,
+                    shadowColor: '#000000',
+                    shadowOffset: { width: 0, height: 2 },
+                    shadowOpacity: 0.08,
+                    shadowRadius: 4
+                  }
+                },
+                children: [
+                  {
+                    id: uuidv4(),
+                    type: 'Container',
+                    props: {
+                      variant: 'default',
+                      style: { 
+                        flexDirection: 'row', 
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        marginBottom: 12
+                      }
+                    },
+                    children: [
+                      {
+                        id: uuidv4(),
+                        type: 'Container',
+                        props: { variant: 'default', style: { flex: 1 } },
+                        children: [
+                          {
+                            id: uuidv4(),
+                            type: 'Text',
+                            props: {
+                              variant: 'title',
+                              text: '🎯 Quina',
+                              style: { 
+                                fontSize: 18, 
+                                fontWeight: '700', 
+                                color: '#171717',
+                                marginBottom: 4
+                              }
+                            }
+                          },
+                          {
+                            id: uuidv4(),
+                            type: 'Text',
+                            props: {
+                              variant: 'body',
+                              text: 'Escolha 5 números de 1 a 80',
+                              style: { 
+                                fontSize: 14, 
+                                color: '#737373',
+                                marginBottom: 8
+                              }
+                            }
+                          },
+                          {
+                            id: uuidv4(),
+                            type: 'Text',
+                            props: {
+                              variant: 'subtitle',
+                              text: 'Prêmio: R$ 8.500.000',
+                              style: { 
+                                fontSize: 16, 
+                                fontWeight: '600', 
+                                color: '#16a34a'
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        id: uuidv4(),
+                        type: 'Button',
+                        props: {
+                          variant: 'primary',
+                          title: 'Apostar',
+                          style: {
+                            backgroundColor: '#16a34a',
+                            borderRadius: 8,
+                            paddingVertical: 8,
+                            paddingHorizontal: 16
+                          },
+                          actions: [
+                            { type: 'navigate', payload: { screen: 'quina-bet' } }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              // Lotofácil
+              {
+                id: uuidv4(),
+                type: 'Container',
+                props: {
+                  variant: 'card',
+                  style: {
+                    backgroundColor: '#ffffff',
+                    borderRadius: 16,
+                    padding: 20,
+                    marginBottom: 16,
+                    elevation: 2,
+                    shadowColor: '#000000',
+                    shadowOffset: { width: 0, height: 2 },
+                    shadowOpacity: 0.08,
+                    shadowRadius: 4
+                  }
+                },
+                children: [
+                  {
+                    id: uuidv4(),
+                    type: 'Container',
+                    props: {
+                      variant: 'default',
+                      style: { 
+                        flexDirection: 'row', 
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        marginBottom: 12
+                      }
+                    },
+                    children: [
+                      {
+                        id: uuidv4(),
+                        type: 'Container',
+                        props: { variant: 'default', style: { flex: 1 } },
+                        children: [
+                          {
+                            id: uuidv4(),
+                            type: 'Text',
+                            props: {
+                              variant: 'title',
+                              text: '💜 Lotofácil',
+                              style: { 
+                                fontSize: 18, 
+                                fontWeight: '700', 
+                                color: '#171717',
+                                marginBottom: 4
+                              }
+                            }
+                          },
+                          {
+                            id: uuidv4(),
+                            type: 'Text',
+                            props: {
+                              variant: 'body',
+                              text: 'Escolha 15 números de 1 a 25',
+                              style: { 
+                                fontSize: 14, 
+                                color: '#737373',
+                                marginBottom: 8
+                              }
+                            }
+                          },
+                          {
+                            id: uuidv4(),
+                            type: 'Text',
+                            props: {
+                              variant: 'subtitle',
+                              text: 'Prêmio: R$ 1.800.000',
+                              style: { 
+                                fontSize: 16, 
+                                fontWeight: '600', 
+                                color: '#7c3aed'
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        id: uuidv4(),
+                        type: 'Button',
+                        props: {
+                          variant: 'primary',
+                          title: 'Apostar',
+                          style: {
+                            backgroundColor: '#7c3aed',
+                            borderRadius: 8,
+                            paddingVertical: 8,
+                            paddingHorizontal: 16
+                          },
+                          actions: [
+                            { type: 'navigate', payload: { screen: 'lotofacil-bet' } }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+
+          // Quick Tips Section
+          {
+            id: 'quick-tips',
             type: 'grid',
-            title: 'Modalidades Disponíveis',
-            components: this.getLotteryGames(region)
+            style: { paddingHorizontal: 16, marginTop: 20, paddingBottom: 30 },
+            components: [
+              {
+                id: uuidv4(),
+                type: 'Text',
+                props: {
+                  variant: 'title',
+                  text: '💡 Dicas Rápidas',
+                  style: { 
+                    fontSize: 20, 
+                    fontWeight: '700', 
+                    color: '#171717',
+                    marginBottom: 16
+                  }
+                }
+              },
+              {
+                id: uuidv4(),
+                type: 'Container',
+                props: {
+                  variant: 'default',
+                  style: { 
+                    flexDirection: 'row', 
+                    flexWrap: 'wrap',
+                    justifyContent: 'space-between'
+                  }
+                },
+                children: [
+                  // Tip 1
+                  {
+                    id: uuidv4(),
+                    type: 'Container',
+                    props: {
+                      variant: 'card',
+                      style: {
+                        width: '48%',
+                        backgroundColor: '#ffffff',
+                        borderRadius: 16,
+                        padding: 16,
+                        marginBottom: 16,
+                        elevation: 2,
+                        shadowColor: '#000000',
+                        shadowOffset: { width: 0, height: 2 },
+                        shadowOpacity: 0.08,
+                        shadowRadius: 4
+                      }
+                    },
+                    children: [
+                      {
+                        id: uuidv4(),
+                        type: 'Text',
+                        props: {
+                          variant: 'body',
+                          text: '🎲',
+                          style: { fontSize: 32, textAlign: 'center', marginBottom: 8 }
+                        }
+                      },
+                      {
+                        id: uuidv4(),
+                        type: 'Text',
+                        props: {
+                          variant: 'subtitle',
+                          text: 'Jogo Responsável',
+                          style: { 
+                            fontSize: 14, 
+                            fontWeight: '600', 
+                            color: '#171717',
+                            textAlign: 'center',
+                            marginBottom: 8
+                          }
+                        }
+                      },
+                      {
+                        id: uuidv4(),
+                        type: 'Text',
+                        props: {
+                          variant: 'caption',
+                          text: 'Aposte com responsabilidade',
+                          style: { 
+                            fontSize: 12, 
+                            color: '#737373',
+                            textAlign: 'center'
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  // Tip 2
+                  {
+                    id: uuidv4(),
+                    type: 'Container',
+                    props: {
+                      variant: 'card',
+                      style: {
+                        width: '48%',
+                        backgroundColor: '#ffffff',
+                        borderRadius: 16,
+                        padding: 16,
+                        marginBottom: 16,
+                        elevation: 2,
+                        shadowColor: '#000000',
+                        shadowOffset: { width: 0, height: 2 },
+                        shadowOpacity: 0.08,
+                        shadowRadius: 4
+                      }
+                    },
+                    children: [
+                      {
+                        id: uuidv4(),
+                        type: 'Text',
+                        props: {
+                          variant: 'body',
+                          text: '📊',
+                          style: { fontSize: 32, textAlign: 'center', marginBottom: 8 }
+                        }
+                      },
+                      {
+                        id: uuidv4(),
+                        type: 'Text',
+                        props: {
+                          variant: 'subtitle',
+                          text: 'Resultados',
+                          style: { 
+                            fontSize: 14, 
+                            fontWeight: '600', 
+                            color: '#171717',
+                            textAlign: 'center',
+                            marginBottom: 8
+                          }
+                        }
+                      },
+                      {
+                        id: uuidv4(),
+                        type: 'Text',
+                        props: {
+                          variant: 'caption',
+                          text: 'Confira os últimos sorteios',
+                          style: { 
+                            fontSize: 12, 
+                            color: '#737373',
+                            textAlign: 'center'
+                          }
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
           }
         ]
       },
       metadata: {
         name: 'Lottery Screen',
+        userId,
         region,
         version: 1,
         lastUpdated: new Date().toISOString()
@@ -619,65 +3515,755 @@ class ScreenStore {
     
     return {
       layout: {
-        type: 'sections',
+        type: 'scroll',
+        backgroundColor: '#fafafa',
         sections: [
+          // Profile Header with Avatar and User Info
           {
-            id: 'header',
-            type: 'profile-header',
+            id: 'profile-header',
+            type: 'hero',
+            style: { backgroundColor: '#ffffff', paddingBottom: 20 },
             components: [
               {
                 id: uuidv4(),
                 type: 'Container',
-                props: { padding: 'lg' },
+                props: {
+                  variant: 'default',
+                  style: {
+                    height: 140,
+                    background: 'linear-gradient(135deg, #0ea5e9, #0284c7)',
+                    justifyContent: 'flex-end',
+                    paddingHorizontal: 20,
+                    paddingBottom: 20,
+                    borderRadius: 0
+                  }
+                },
+                children: [
+                  {
+                    id: uuidv4(),
+                    type: 'Container',
+                    props: {
+                      variant: 'default',
+                      style: { flexDirection: 'row', alignItems: 'center' }
+                    },
+                    children: [
+                      // Avatar
+                      {
+                        id: uuidv4(),
+                        type: 'Container',
+                        props: {
+                          variant: 'default',
+                          style: {
+                            width: 80,
+                            height: 80,
+                            borderRadius: 40,
+                            backgroundColor: '#0ea5e9',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            marginRight: 16,
+                            borderWidth: 4,
+                            borderColor: '#ffffff'
+                          }
+                        },
+                        children: [
+                          {
+                            id: uuidv4(),
+                            type: 'Text',
+                            props: {
+                              variant: 'title',
+                              text: 'JD',
+                              style: { fontSize: 32, fontWeight: '700', color: '#ffffff' }
+                            }
+                          }
+                        ]
+                      },
+                      // User Info
+                      {
+                        id: uuidv4(),
+                        type: 'Container',
+                        props: { variant: 'default', style: { flex: 1 } },
+                        children: [
+                          {
+                            id: uuidv4(),
+                            type: 'Text',
+                            props: {
+                              variant: 'title',
+                              text: 'João da Silva',
+                              style: { fontSize: 24, fontWeight: '700', color: '#ffffff', marginBottom: 4 }
+                            }
+                          },
+                          {
+                            id: uuidv4(),
+                            type: 'Text',
+                            props: {
+                              variant: 'body',
+                              text: 'joao.silva@email.com',
+                              style: { fontSize: 14, color: 'rgba(255, 255, 255, 0.8)', marginBottom: 8 }
+                            }
+                          },
+                          {
+                            id: uuidv4(),
+                            type: 'Text',
+                            props: {
+                              variant: 'caption',
+                              text: 'Membro desde Março 2024',
+                              style: { fontSize: 12, color: 'rgba(255, 255, 255, 0.6)' }
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+
+          // Balance Section
+          {
+            id: 'balance-section',
+            type: 'default',
+            style: { paddingHorizontal: 16, marginTop: -10 },
+            components: [
+              {
+                id: uuidv4(),
+                type: 'Container',
+                props: {
+                  variant: 'card',
+                  style: {
+                    backgroundColor: '#ffffff',
+                    borderRadius: 16,
+                    padding: 20,
+                    elevation: 4,
+                    shadowColor: '#000000',
+                    shadowOffset: { width: 0, height: 4 },
+                    shadowOpacity: 0.1,
+                    shadowRadius: 8
+                  }
+                },
+                children: [
+                  // Balance Header
+                  {
+                    id: uuidv4(),
+                    type: 'Container',
+                    props: {
+                      variant: 'default',
+                      style: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }
+                    },
+                    children: [
+                      {
+                        id: uuidv4(),
+                        type: 'Text',
+                        props: {
+                          variant: 'subtitle',
+                          text: 'Saldo Disponível',
+                          style: { fontSize: 16, fontWeight: '600', color: '#737373' }
+                        }
+                      }
+                    ]
+                  },
+                  // Balance Amount
+                  {
+                    id: uuidv4(),
+                    type: 'Text',
+                    props: {
+                      variant: 'title',
+                      text: 'R$ 1.250,00',
+                      style: { fontSize: 32, fontWeight: '800', color: '#0ea5e9', marginBottom: 16 }
+                    }
+                  },
+                  // Action Buttons
+                  {
+                    id: uuidv4(),
+                    type: 'Container',
+                    props: {
+                      variant: 'default',
+                      style: { flexDirection: 'row', justifyContent: 'space-between' }
+                    },
+                    children: [
+                      {
+                        id: uuidv4(),
+                        type: 'Button',
+                        props: {
+                          variant: 'primary',
+                          title: 'DEPOSITAR',
+                          style: {
+                            flex: 1,
+                            backgroundColor: '#16a34a',
+                            borderRadius: 8,
+                            marginRight: 8
+                          },
+                          actions: [
+                            { type: 'navigate', payload: { screen: 'deposit' } }
+                          ]
+                        }
+                      },
+                      {
+                        id: uuidv4(),
+                        type: 'Button',
+                        props: {
+                          variant: 'outline',
+                          title: 'SACAR',
+                          style: {
+                            flex: 1,
+                            backgroundColor: '#f5f5f5',
+                            borderRadius: 8,
+                            marginLeft: 8
+                          },
+                          actions: [
+                            { type: 'navigate', payload: { screen: 'withdraw' } }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+
+          // Stats Section
+          {
+            id: 'stats-section',
+            type: 'default',
+            style: { paddingHorizontal: 16, marginTop: 20 },
+            components: [
+              {
+                id: uuidv4(),
+                type: 'Container',
+                props: {
+                  variant: 'card',
+                  style: {
+                    backgroundColor: '#ffffff',
+                    borderRadius: 16,
+                    padding: 20
+                  }
+                },
                 children: [
                   {
                     id: uuidv4(),
                     type: 'Text',
                     props: {
                       variant: 'title',
-                      text: '👤 Meu Perfil'
+                      text: 'Suas Estatísticas',
+                      style: { fontSize: 18, fontWeight: '700', color: '#171717', marginBottom: 16 }
                     }
+                  },
+                  {
+                    id: uuidv4(),
+                    type: 'Container',
+                    props: {
+                      variant: 'default',
+                      style: { flexDirection: 'row', justifyContent: 'space-between' }
+                    },
+                    children: [
+                      {
+                        id: uuidv4(),
+                        type: 'Container',
+                        props: { variant: 'default', style: { flex: 1, alignItems: 'center' } },
+                        children: [
+                          {
+                            id: uuidv4(),
+                            type: 'Text',
+                            props: {
+                              variant: 'title',
+                              text: '127',
+                              style: { fontSize: 24, fontWeight: '800', color: '#0ea5e9', marginBottom: 4 }
+                            }
+                          },
+                          {
+                            id: uuidv4(),
+                            type: 'Text',
+                            props: {
+                              variant: 'caption',
+                              text: 'Apostas Feitas',
+                              style: { fontSize: 12, color: '#737373', textAlign: 'center' }
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        id: uuidv4(),
+                        type: 'Container',
+                        props: { variant: 'default', style: { flex: 1, alignItems: 'center' } },
+                        children: [
+                          {
+                            id: uuidv4(),
+                            type: 'Text',
+                            props: {
+                              variant: 'title',
+                              text: '89',
+                              style: { fontSize: 24, fontWeight: '800', color: '#16a34a', marginBottom: 4 }
+                            }
+                          },
+                          {
+                            id: uuidv4(),
+                            type: 'Text',
+                            props: {
+                              variant: 'caption',
+                              text: 'Apostas Ganhas',
+                              style: { fontSize: 12, color: '#737373', textAlign: 'center' }
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        id: uuidv4(),
+                        type: 'Container',
+                        props: { variant: 'default', style: { flex: 1, alignItems: 'center' } },
+                        children: [
+                          {
+                            id: uuidv4(),
+                            type: 'Text',
+                            props: {
+                              variant: 'title',
+                              text: '70%',
+                              style: { fontSize: 24, fontWeight: '800', color: '#f59e0b', marginBottom: 4 }
+                            }
+                          },
+                          {
+                            id: uuidv4(),
+                            type: 'Text',
+                            props: {
+                              variant: 'caption',
+                              text: 'Taxa de Acerto',
+                              style: { fontSize: 12, color: '#737373', textAlign: 'center' }
+                            }
+                          }
+                        ]
+                      }
+                    ]
                   }
                 ]
               }
             ]
           },
+
+          // Menu Items
           {
-            id: 'menu',
-            type: 'menu',
+            id: 'menu-section',
+            type: 'default',
+            style: { padding: 16 },
             components: [
+              // Wallet Menu Item
               {
                 id: uuidv4(),
-                type: 'Button',
+                type: 'Container',
                 props: {
-                  variant: 'outline',
-                  title: '💰 Carteira',
-                  actions: [
-                    { type: 'navigate', payload: { screen: 'wallet' } }
-                  ]
-                }
+                  variant: 'card',
+                  style: {
+                    backgroundColor: '#ffffff',
+                    borderRadius: 12,
+                    padding: 16,
+                    marginBottom: 12,
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    elevation: 2,
+                    shadowColor: '#000000',
+                    shadowOffset: { width: 0, height: 2 },
+                    shadowOpacity: 0.08,
+                    shadowRadius: 4
+                  }
+                },
+                children: [
+                  {
+                    id: uuidv4(),
+                    type: 'Container',
+                    props: {
+                      variant: 'default',
+                      style: {
+                        width: 48,
+                        height: 48,
+                        borderRadius: 24,
+                        backgroundColor: 'rgba(14, 165, 233, 0.1)',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        marginRight: 16
+                      }
+                    },
+                    children: [
+                      {
+                        id: uuidv4(),
+                        type: 'Text',
+                        props: {
+                          variant: 'body',
+                          text: '💰',
+                          style: { fontSize: 24 }
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    id: uuidv4(),
+                    type: 'Container',
+                    props: { variant: 'default', style: { flex: 1 } },
+                    children: [
+                      {
+                        id: uuidv4(),
+                        type: 'Text',
+                        props: {
+                          variant: 'subtitle',
+                          text: 'Carteira',
+                          style: { fontSize: 16, fontWeight: '600', color: '#171717', marginBottom: 4 }
+                        }
+                      },
+                      {
+                        id: uuidv4(),
+                        type: 'Text',
+                        props: {
+                          variant: 'caption',
+                          text: 'Depósitos, saques e histórico',
+                          style: { fontSize: 14, color: '#737373' }
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    id: uuidv4(),
+                    type: 'Text',
+                    props: {
+                      variant: 'body',
+                      text: '›',
+                      style: { fontSize: 20, color: '#737373', marginLeft: 8 }
+                    }
+                  }
+                ]
               },
+              // Bet History Menu Item
               {
                 id: uuidv4(),
-                type: 'Button',
+                type: 'Container',
                 props: {
-                  variant: 'outline',
-                  title: '📊 Histórico de Apostas',
-                  actions: [
-                    { type: 'navigate', payload: { screen: 'bet-history' } }
-                  ]
-                }
+                  variant: 'card',
+                  style: {
+                    backgroundColor: '#ffffff',
+                    borderRadius: 12,
+                    padding: 16,
+                    marginBottom: 12,
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    elevation: 2,
+                    shadowColor: '#000000',
+                    shadowOffset: { width: 0, height: 2 },
+                    shadowOpacity: 0.08,
+                    shadowRadius: 4
+                  }
+                },
+                children: [
+                  {
+                    id: uuidv4(),
+                    type: 'Container',
+                    props: {
+                      variant: 'default',
+                      style: {
+                        width: 48,
+                        height: 48,
+                        borderRadius: 24,
+                        backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        marginRight: 16
+                      }
+                    },
+                    children: [
+                      {
+                        id: uuidv4(),
+                        type: 'Text',
+                        props: {
+                          variant: 'body',
+                          text: '📊',
+                          style: { fontSize: 24 }
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    id: uuidv4(),
+                    type: 'Container',
+                    props: { variant: 'default', style: { flex: 1 } },
+                    children: [
+                      {
+                        id: uuidv4(),
+                        type: 'Text',
+                        props: {
+                          variant: 'subtitle',
+                          text: 'Histórico de Apostas',
+                          style: { fontSize: 16, fontWeight: '600', color: '#171717', marginBottom: 4 }
+                        }
+                      },
+                      {
+                        id: uuidv4(),
+                        type: 'Text',
+                        props: {
+                          variant: 'caption',
+                          text: 'Todas as suas apostas',
+                          style: { fontSize: 14, color: '#737373' }
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    id: uuidv4(),
+                    type: 'Text',
+                    props: {
+                      variant: 'body',
+                      text: '›',
+                      style: { fontSize: 20, color: '#737373', marginLeft: 8 }
+                    }
+                  }
+                ]
               },
+              // Favorites Menu Item
               {
                 id: uuidv4(),
-                type: 'Button',
+                type: 'Container',
                 props: {
-                  variant: 'outline',
-                  title: '⚙️ Configurações',
-                  actions: [
-                    { type: 'navigate', payload: { screen: 'settings' } }
-                  ]
-                }
+                  variant: 'card',
+                  style: {
+                    backgroundColor: '#ffffff',
+                    borderRadius: 12,
+                    padding: 16,
+                    marginBottom: 12,
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    elevation: 2,
+                    shadowColor: '#000000',
+                    shadowOffset: { width: 0, height: 2 },
+                    shadowOpacity: 0.08,
+                    shadowRadius: 4
+                  }
+                },
+                children: [
+                  {
+                    id: uuidv4(),
+                    type: 'Container',
+                    props: {
+                      variant: 'default',
+                      style: {
+                        width: 48,
+                        height: 48,
+                        borderRadius: 24,
+                        backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        marginRight: 16
+                      }
+                    },
+                    children: [
+                      {
+                        id: uuidv4(),
+                        type: 'Text',
+                        props: {
+                          variant: 'body',
+                          text: '❤️',
+                          style: { fontSize: 24 }
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    id: uuidv4(),
+                    type: 'Container',
+                    props: { variant: 'default', style: { flex: 1 } },
+                    children: [
+                      {
+                        id: uuidv4(),
+                        type: 'Text',
+                        props: {
+                          variant: 'subtitle',
+                          text: 'Favoritos',
+                          style: { fontSize: 16, fontWeight: '600', color: '#171717', marginBottom: 4 }
+                        }
+                      },
+                      {
+                        id: uuidv4(),
+                        type: 'Text',
+                        props: {
+                          variant: 'caption',
+                          text: 'Jogos e times favoritos',
+                          style: { fontSize: 14, color: '#737373' }
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    id: uuidv4(),
+                    type: 'Text',
+                    props: {
+                      variant: 'body',
+                      text: '›',
+                      style: { fontSize: 20, color: '#737373', marginLeft: 8 }
+                    }
+                  }
+                ]
+              },
+              // Notifications Menu Item
+              {
+                id: uuidv4(),
+                type: 'Container',
+                props: {
+                  variant: 'card',
+                  style: {
+                    backgroundColor: '#ffffff',
+                    borderRadius: 12,
+                    padding: 16,
+                    marginBottom: 12,
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    elevation: 2,
+                    shadowColor: '#000000',
+                    shadowOffset: { width: 0, height: 2 },
+                    shadowOpacity: 0.08,
+                    shadowRadius: 4
+                  }
+                },
+                children: [
+                  {
+                    id: uuidv4(),
+                    type: 'Container',
+                    props: {
+                      variant: 'default',
+                      style: {
+                        width: 48,
+                        height: 48,
+                        borderRadius: 24,
+                        backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        marginRight: 16
+                      }
+                    },
+                    children: [
+                      {
+                        id: uuidv4(),
+                        type: 'Text',
+                        props: {
+                          variant: 'body',
+                          text: '🔔',
+                          style: { fontSize: 24 }
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    id: uuidv4(),
+                    type: 'Container',
+                    props: { variant: 'default', style: { flex: 1 } },
+                    children: [
+                      {
+                        id: uuidv4(),
+                        type: 'Text',
+                        props: {
+                          variant: 'subtitle',
+                          text: 'Notificações',
+                          style: { fontSize: 16, fontWeight: '600', color: '#171717', marginBottom: 4 }
+                        }
+                      },
+                      {
+                        id: uuidv4(),
+                        type: 'Text',
+                        props: {
+                          variant: 'caption',
+                          text: 'Configurações de notificação',
+                          style: { fontSize: 14, color: '#737373' }
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    id: uuidv4(),
+                    type: 'Text',
+                    props: {
+                      variant: 'body',
+                      text: '›',
+                      style: { fontSize: 20, color: '#737373', marginLeft: 8 }
+                    }
+                  }
+                ]
+              },
+              // Settings Menu Item
+              {
+                id: uuidv4(),
+                type: 'Container',
+                props: {
+                  variant: 'card',
+                  style: {
+                    backgroundColor: '#ffffff',
+                    borderRadius: 12,
+                    padding: 16,
+                    marginBottom: 12,
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    elevation: 2,
+                    shadowColor: '#000000',
+                    shadowOffset: { width: 0, height: 2 },
+                    shadowOpacity: 0.08,
+                    shadowRadius: 4
+                  }
+                },
+                children: [
+                  {
+                    id: uuidv4(),
+                    type: 'Container',
+                    props: {
+                      variant: 'default',
+                      style: {
+                        width: 48,
+                        height: 48,
+                        borderRadius: 24,
+                        backgroundColor: 'rgba(115, 115, 115, 0.1)',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        marginRight: 16
+                      }
+                    },
+                    children: [
+                      {
+                        id: uuidv4(),
+                        type: 'Text',
+                        props: {
+                          variant: 'body',
+                          text: '⚙️',
+                          style: { fontSize: 24 }
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    id: uuidv4(),
+                    type: 'Container',
+                    props: { variant: 'default', style: { flex: 1 } },
+                    children: [
+                      {
+                        id: uuidv4(),
+                        type: 'Text',
+                        props: {
+                          variant: 'subtitle',
+                          text: 'Configurações',
+                          style: { fontSize: 16, fontWeight: '600', color: '#171717', marginBottom: 4 }
+                        }
+                      },
+                      {
+                        id: uuidv4(),
+                        type: 'Text',
+                        props: {
+                          variant: 'caption',
+                          text: 'Preferências da conta',
+                          style: { fontSize: 14, color: '#737373' }
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    id: uuidv4(),
+                    type: 'Text',
+                    props: {
+                      variant: 'body',
+                      text: '›',
+                      style: { fontSize: 20, color: '#737373', marginLeft: 8 }
+                    }
+                  }
+                ]
               }
             ]
           }
