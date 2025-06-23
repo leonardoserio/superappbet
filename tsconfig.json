@@ -1,3 +1,29 @@
 {
-  "extends": "@react-native/typescript-config"
+  "extends": "@react-native/typescript-config",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "@/components/*": ["src/components/*"],
+      "@/design-system/*": ["src/design-system/*"],
+      "@/hooks/*": ["src/hooks/*"],
+      "@/modules/*": ["src/modules/*"],
+      "@/navigation/*": ["src/navigation/*"],
+      "@/screens/*": ["src/screens/*"],
+      "@/services/*": ["src/services/*"],
+      "@/types/*": ["src/types/*"],
+      "@/utils/*": ["src/utils/*"]
+    }
+  },
+  "include": [
+    "src/**/*",
+    "App.tsx",
+    "index.js",
+    "__tests__/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "android",
+    "ios"
+  ]
 }
