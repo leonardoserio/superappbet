@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, ScrollView, Text, StyleSheet, ActivityIndicator } from 'react-native';
+import * as RN from 'react-native';
 import { useTheme } from '@/design-system';
 import { SDUIService, ScreenConfiguration } from '@/services/sdui/SDUIService';
 import { WebSocketService } from '@/services/sdui/WebSocketService';
@@ -22,12 +23,9 @@ interface SDUIRendererProps {
   onError?: (error: Error) => void;
 }
 
-interface ComponentRegistry {
-  [key: string]: React.ComponentType<any>;
-}
-
-// Register all SDUI components
-const componentRegistry: ComponentRegistry = {
+// Component map similar to render-from-json.tsx approach
+const COMPONENT_MAP = {
+  // Server-driven components
   Container,
   Button,
   Text: SDUIText,
@@ -35,11 +33,19 @@ const componentRegistry: ComponentRegistry = {
   QuickBetCard,
   PromotionCard,
   GameCard,
-  // Add new components as they are created
-  HeroBanner: Container, // Using Container as placeholder
+  // React Native components
+  ...RN,
+  // Additional placeholders for new components
+  HeroBanner: Container,
   LotteryCard: Container,
   GameCarousel: Container,
   LiveScore: Container,
+} as const;
+
+type ComponentKey = keyof typeof COMPONENT_MAP;
+
+const isValidComponentKey = (key: string): key is ComponentKey => {
+  return key in COMPONENT_MAP;
 };
 
 export const SDUIRenderer: React.FC<SDUIRendererProps> = ({
@@ -113,7 +119,7 @@ export const SDUIRenderer: React.FC<SDUIRendererProps> = ({
             userId,
           });
       }
-      
+      console.log({screenConfig})
       setConfig(screenConfig);
       onScreenLoad?.(screenConfig);
       
@@ -125,10 +131,10 @@ export const SDUIRenderer: React.FC<SDUIRendererProps> = ({
       }, userId);
       
     } catch (err) {
-      const error = err as Error;
-      console.error(`Failed to load screen ${screenName}:`, error);
-      setError(error);
-      onError?.(error);
+      const loadError = err as Error;
+      console.error(`Failed to load screen ${screenName}:`, loadError);
+      setError(loadError);
+      onError?.(loadError);
     } finally {
       setLoading(false);
     }
@@ -137,9 +143,12 @@ export const SDUIRenderer: React.FC<SDUIRendererProps> = ({
   const renderComponent = (componentConfig: any, index: number): React.ReactNode => {
     if (!componentConfig) return null;
     
-    const { id, type, props = {}, children = [], conditions } = componentConfig || {};
+    // Support both new format (type/props) and old format (component/props)
+    const componentType = componentConfig.type || componentConfig.component;
+    const componentProps = componentConfig.props || {};
+    const { id, children = [], conditions } = componentConfig;
     
-    if (!type) {
+    if (!componentType) {
       console.warn(`Component missing type at index ${index}`);
       return null;
     }
@@ -149,30 +158,40 @@ export const SDUIRenderer: React.FC<SDUIRendererProps> = ({
       return null;
     }
 
-    const ComponentClass = componentRegistry[type];
-    
-    if (!ComponentClass) {
-      console.warn(`Unknown component type: ${type}`);
+    // Verify if the component exists using the same approach as render-from-json
+    if (!isValidComponentKey(componentType)) {
+      console.warn(`Component '${componentType}' not found`);
       return (
         <View key={id || index} style={styles.unknownComponent}>
           <Text style={styles.unknownComponentText}>
-            Unknown component: {type}
+            Unknown component: {componentType}
           </Text>
         </View>
       );
     }
 
-    // Handle component actions - ensure props is always an object
-    const safeProps = props || {};
-    const enhancedProps = {
-      ...safeProps,
+    const Component: React.ComponentType<any> = COMPONENT_MAP[componentType] as any;
+    
+    // Prepare component props similar to render-from-json approach
+    const enhancedProps = { 
+      ...componentProps, 
       key: id || index,
-      schema: componentConfig, // Pass the full component config as schema
-      onPress: safeProps.onPress || (() => handleComponentAction(componentConfig)),
-      children: children?.length > 0 ? children.map(renderComponent) : safeProps.children,
+      schema: componentConfig, // Keep schema for SDUI components that need it
     };
 
-    return React.createElement(ComponentClass, enhancedProps);
+    // Handle children - process nested components if they exist
+    if (children && Array.isArray(children) && children.length > 0) {
+      enhancedProps.children = children.map((child: any, childIndex: number) => 
+        renderComponent(child, childIndex)
+      );
+    }
+
+    // Add action handling for interactive components
+    if (!enhancedProps.onPress && (componentType === 'Button' || componentConfig.actions)) {
+      enhancedProps.onPress = () => handleComponentAction(componentConfig);
+    }
+
+    return React.createElement(Component, enhancedProps);
   };
 
   const renderSection = (section: any, index: number): React.ReactNode => {
@@ -189,7 +208,7 @@ export const SDUIRenderer: React.FC<SDUIRendererProps> = ({
                 {title}
               </Text>
             )}
-            {components.map(renderComponent)}
+            {components.map((comp: any, idx: number) => renderComponent(comp, idx))}
           </View>
         );
 
@@ -236,7 +255,7 @@ export const SDUIRenderer: React.FC<SDUIRendererProps> = ({
       case 'banner':
         return (
           <View key={id || index} style={[styles.bannerSection, style]}>
-            {components.map(renderComponent)}
+            {components.map((comp: any, idx: number) => renderComponent(comp, idx))}
           </View>
         );
 
@@ -248,14 +267,44 @@ export const SDUIRenderer: React.FC<SDUIRendererProps> = ({
                 {title}
               </Text>
             )}
-            {components.map(renderComponent)}
+            {components.map((comp: any, idx: number) => renderComponent(comp, idx))}
           </View>
         );
     }
   };
 
+  const renderFromComponentArray = (components: any[]): React.ReactElement[] => {
+    if (!Array.isArray(components)) {
+      console.error('Components must be an array');
+      return [];
+    }
+
+    return components
+      .map((item, index) => {
+        if (!item || typeof item !== 'object') {
+          console.warn(`Invalid component item at index ${index}:`, item);
+          return null;
+        }
+
+        return renderComponent(item, index);
+      })
+      .filter((component): component is React.ReactElement => component !== null);
+  };
+
   const renderLayout = (): React.ReactNode => {
-    if (!config || !config.layout) return null;
+    if (!config) return null;
+
+    // Support direct components array format (like render-from-json.tsx)
+    if (config.components && Array.isArray(config.components)) {
+      return (
+        <ScrollView style={[styles.scrollContainer, { backgroundColor: theme.colors.background.primary }]}>
+          {renderFromComponentArray(config.components)}
+        </ScrollView>
+      );
+    }
+
+    // Support layout-based format (existing SDUI format)
+    if (!config.layout) return null;
 
     const { layout } = config;
     const containerStyle = {
@@ -266,7 +315,7 @@ export const SDUIRenderer: React.FC<SDUIRendererProps> = ({
       case 'scroll':
         return (
           <ScrollView style={[styles.scrollContainer, containerStyle]}>
-            {layout.sections?.map(renderSection)}
+            {layout.sections?.map((section: any, idx: number) => renderSection(section, idx))}
           </ScrollView>
         );
 
@@ -275,21 +324,21 @@ export const SDUIRenderer: React.FC<SDUIRendererProps> = ({
         const firstTab = layout.tabs?.[0];
         return (
           <ScrollView style={[styles.scrollContainer, containerStyle]}>
-            {firstTab?.components?.map(renderComponent)}
+            {firstTab?.components?.map((comp: any, idx: number) => renderComponent(comp, idx))}
           </ScrollView>
         );
 
       case 'sections':
         return (
           <ScrollView style={[styles.scrollContainer, containerStyle]}>
-            {layout.sections?.map(renderSection)}
+            {layout.sections?.map((section: any, idx: number) => renderSection(section, idx))}
           </ScrollView>
         );
 
       case 'grid':
         return (
           <View style={[styles.gridLayout, containerStyle]}>
-            {layout.sections?.map(renderSection)}
+            {layout.sections?.map((section: any, idx: number) => renderSection(section, idx))}
           </View>
         );
 
@@ -393,10 +442,10 @@ export const SDUIRenderer: React.FC<SDUIRendererProps> = ({
           {error.message}
         </Text>
         <Button
+          schema={{ type: 'Button' }}
           variant="outline"
           title="Retry"
           onPress={loadScreenConfiguration}
-          style={styles.retryButton}
         />
       </View>
     );

@@ -9,13 +9,17 @@ export interface SDUIConfiguration {
 }
 
 export interface ScreenConfiguration {
-  layout: {
+  layout?: {
     type: 'scroll' | 'tabs' | 'grid' | 'sections';
     backgroundColor?: string;
     sections?: any[];
     tabs?: any[];
   };
-  metadata: {
+  // Support simple components array format (like render-from-json.tsx)
+  components?: any[];
+  // Support title for simple format
+  title?: string;
+  metadata?: {
     name: string;
     version: number;
     lastUpdated: string;
@@ -23,9 +27,9 @@ export interface ScreenConfiguration {
     personalizable?: boolean;
     dynamicContent?: boolean;
   };
-  screenName: string;
-  variant: string;
-  generatedAt: string;
+  screenName?: string;
+  variant?: string;
+  generatedAt?: string;
 }
 
 export interface ComponentSchema {
