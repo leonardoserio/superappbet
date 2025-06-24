@@ -33,13 +33,18 @@ const COMPONENT_MAP = {
   QuickBetCard,
   PromotionCard,
   GameCard,
-  // React Native components
-  ...RN,
   // Additional placeholders for new components
   HeroBanner: Container,
   LotteryCard: Container,
   GameCarousel: Container,
   LiveScore: Container,
+  // React Native components (excluding Button and Text to avoid conflicts)
+  View: RN.View,
+  ScrollView: RN.ScrollView,
+  TouchableOpacity: RN.TouchableOpacity,
+  Image: RN.Image,
+  FlatList: RN.FlatList,
+  ActivityIndicator: RN.ActivityIndicator,
 } as const;
 
 type ComponentKey = keyof typeof COMPONENT_MAP;
@@ -60,33 +65,6 @@ export const SDUIRenderer: React.FC<SDUIRendererProps> = ({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   const { theme } = useTheme();
-
-  useEffect(() => {
-    loadScreenConfiguration();
-    
-    // Setup WebSocket handler for real-time screen updates
-    const handleScreenUpdate = (data: any) => {
-      if (data?.screenName === screenName && data?.variant === variant) {
-        console.log(`🖥️ Screen ${screenName} updated via WebSocket`);
-        if (data.config) {
-          setConfig(data.config);
-          onScreenLoad?.(data.config);
-        }
-      }
-    };
-    
-    try {
-      WebSocketService.setEventHandlers({
-        onScreenUpdated: handleScreenUpdate,
-      });
-    } catch (wsError) {
-      console.warn('Failed to setup WebSocket handlers:', wsError);
-    }
-
-    return () => {
-      // Cleanup if needed
-    };
-  }, [screenName, variant, userId, loadScreenConfiguration, onScreenLoad]);
 
   const loadScreenConfiguration = useCallback(async () => {
     try {
@@ -139,6 +117,33 @@ export const SDUIRenderer: React.FC<SDUIRendererProps> = ({
       setLoading(false);
     }
   }, [screenName, variant, userId, onScreenLoad, onError]);
+
+  useEffect(() => {
+    loadScreenConfiguration();
+    
+    // Setup WebSocket handler for real-time screen updates
+    const handleScreenUpdate = (data: any) => {
+      if (data?.screenName === screenName && data?.variant === variant) {
+        console.log(`🖥️ Screen ${screenName} updated via WebSocket`);
+        if (data.config) {
+          setConfig(data.config);
+          onScreenLoad?.(data.config);
+        }
+      }
+    };
+    
+    try {
+      WebSocketService.setEventHandlers({
+        onScreenUpdated: handleScreenUpdate,
+      });
+    } catch (wsError) {
+      console.warn('Failed to setup WebSocket handlers:', wsError);
+    }
+
+    return () => {
+      // Cleanup if needed
+    };
+  }, [screenName, variant, userId, loadScreenConfiguration, onScreenLoad]);
 
   const renderComponent = (componentConfig: any, index: number): React.ReactNode => {
     if (!componentConfig) return null;

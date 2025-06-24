@@ -227,8 +227,43 @@ class SDUIServiceClass {
       
       return result.data;
     } catch (error) {
-      console.error('SDUI: Failed to fetch home screen:', error);
-      throw error;
+      console.warn('SDUI: Backend not available, using fallback home screen configuration');
+      
+      // Return a simple fallback configuration
+      return {
+        screenName: 'home',
+        metadata: {
+          name: 'Home Screen',
+          version: 1,
+          lastUpdated: new Date().toISOString(),
+          cacheTTL: 300,
+        },
+        components: [
+          {
+            type: 'Container',
+            props: {
+              style: { flex: 1, padding: 16 }
+            },
+            children: [
+              {
+                type: 'Text',
+                props: {
+                  variant: 'heading',
+                  text: 'Welcome to SuperAppBet',
+                  style: { marginBottom: 16 }
+                }
+              },
+              {
+                type: 'Text',
+                props: {
+                  variant: 'body',
+                  text: 'Server-driven UI is not available. Using fallback configuration.',
+                }
+              }
+            ]
+          }
+        ]
+      };
     }
   }
 

@@ -1356,35 +1356,39 @@ class ScreenStore {
               }
             ]
           },
+          {
+            id: 'sdfasdf',
+            type: 'View',
+            components:[
+          {
+            id: uuidv4(),
+            type: 'Text',
+            props: {
+              variant: 'title',
+              text: 'Modalidades',
+              style: { 
+                fontSize: 20, 
+                fontWeight: '700', 
+                color: '#000',
+                paddingHorizontal: 0
+              }
+            }
+          }],
+        },
 
           // Quick Sports Categories
           {
             id: 'sports-categories',
             type: 'carousel',
-            style: { paddingLeft: 16, marginTop: 20,flex:1},
+            style: { paddingLeft: 16},
             components: [
-              {
-                id: uuidv4(),
-                type: 'Text',
-                props: {
-                  variant: 'title',
-                  text: 'Modalidades',
-                  style: { 
-                    fontSize: 20, 
-                    fontWeight: '700', 
-                    color: '#171717',
-                    marginBottom: 16,
-                    paddingHorizontal: 0
-                  }
-                }
-              },
               {
                 id: uuidv4(),
                 type: 'Container',
                 props: {
                   variant: 'card',
                   style: {
-                    width: 120,
+                    // width: 120,
                     backgroundColor: '#ffffff',
                     borderRadius: 16,
                     padding: 16,
@@ -1429,7 +1433,7 @@ class ScreenStore {
                 props: {
                   variant: 'card',
                   style: {
-                    width: 120,
+                    // width: 120,
                     backgroundColor: '#ffffff',
                     borderRadius: 16,
                     padding: 16,
@@ -1474,7 +1478,7 @@ class ScreenStore {
                 props: {
                   variant: 'card',
                   style: {
-                    width: 120,
+                    // width: 120,
                     backgroundColor: '#ffffff',
                     borderRadius: 16,
                     padding: 16,
@@ -1519,7 +1523,7 @@ class ScreenStore {
                 props: {
                   variant: 'card',
                   style: {
-                    width: 120,
+                    // width: 120,
                     backgroundColor: '#ffffff',
                     borderRadius: 16,
                     padding: 16,
@@ -2102,7 +2106,7 @@ class ScreenStore {
                 type: 'Text',
                 props: {
                   variant: 'title',
-                  text: '🔥 Apostas Populares',
+                  text: '🔥 Apostas Popularess',
                   style: { 
                     fontSize: 20, 
                     fontWeight: '700', 
@@ -2112,6 +2116,9 @@ class ScreenStore {
                 }
               },
               {
+                id: 'popular-bets',
+                type: 'flex',
+                style: { paddingHorizontal: 16, marginTop: 20, paddingBottom: 30 },
                 id: uuidv4(),
                 type: 'Container',
                 props: {
@@ -2256,7 +2263,45 @@ class ScreenStore {
                 ]
               }
             ]
+          },
+          
+          {
+            id: uuidv4(),
+            type: 'View',
+            props: {
+              variant: 'card',
+              style: {
+                backgroundColor: '#fff',
+                borderRadius: 16,
+                padding: 20,
+                marginHorizontal: 16,
+                marginTop: 24,
+                alignItems: 'center',
+                elevation: 2,
+                shadowColor: '#000000',
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.08,
+                shadowRadius: 4
+              }
+            },
+            children: [
+              {
+                id: uuidv4(),
+                type: 'Text',
+                props: {
+                  variant: 'title',
+                  text: 'Novo Component',
+                  style: {
+                    fontSize: 20,
+                    fontWeight: '700',
+                    color: '#000',
+                    textAlign: 'center'
+                  }
+                }
+              }
+            ]
           }
+          
         ]
       },
       metadata: {

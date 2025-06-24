@@ -1,11 +1,10 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { useTheme } from '@/design-system';
-import { SDUIRenderer } from '@/components/sdui/SDUIRenderer';
-import { Icon, LiveIcon, BetSlipIcon, WalletIcon } from '@/components/shared/Icon';
 
-const { width } = Dimensions.get('window');
+import { LiveIcon, BetSlipIcon, WalletIcon } from '@/components/shared/Icon';
+import { SDUIRenderer } from '@/components/sdui/SDUIRenderer';
 
 export const HomeScreen: React.FC = () => {
   const { theme } = useTheme();
@@ -238,7 +237,7 @@ export const HomeScreen: React.FC = () => {
           {/* Welcome Promotion */}
           <View style={styles.promotionCard}>
             <LinearGradient
-              colors={theme.colors.gradients.primary}
+              colors={[...theme.colors.gradients.primary]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={styles.promotionGradient}

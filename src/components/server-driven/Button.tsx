@@ -25,12 +25,12 @@ export const Button: React.FC<ButtonProps> = ({
     switch (variant) {
       case 'primary':
         return {
-          backgroundColor: disabled ? theme.colors.neutral[300] : theme.colors.interactive.primary,
+          backgroundColor: disabled ? theme.colors.border.secondary : theme.colors.interactive.primary,
           borderWidth: 0,
         };
       case 'secondary':
         return {
-          backgroundColor: disabled ? theme.colors.neutral[100] : theme.colors.interactive.secondary,
+          backgroundColor: disabled ? theme.colors.background.tertiary : theme.colors.interactive.secondary,
           borderWidth: 1,
           borderColor: theme.colors.border.primary,
         };
@@ -38,7 +38,7 @@ export const Button: React.FC<ButtonProps> = ({
         return {
           backgroundColor: 'transparent',
           borderWidth: 1,
-          borderColor: disabled ? theme.colors.neutral[300] : theme.colors.interactive.primary,
+          borderColor: disabled ? theme.colors.border.secondary : theme.colors.interactive.primary,
         };
       case 'ghost':
         return {

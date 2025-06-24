@@ -229,7 +229,7 @@ export const CasinoScreen: React.FC = () => {
       },
       jackpotText: {
         fontSize: 11,
-        color: theme.colors.secondary[500],
+        color: theme.colors.interactive.secondary,
         fontWeight: '700',
       },
       playButton: {
@@ -263,7 +263,7 @@ export const CasinoScreen: React.FC = () => {
           {/* Jackpot Banner */}
           <View style={styles.jackpotBanner}>
             <LinearGradient
-              colors={theme.colors.gradients.casino}
+              colors={[...theme.colors.gradients.casino]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={styles.jackpotGradient}
